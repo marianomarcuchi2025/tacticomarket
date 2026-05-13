@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TácticoMarket - Funcional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>TácticoMarket — Marketplace Militar</title>
     <style>
         * {
             margin: 0;
@@ -349,9 +349,7 @@
     }
 
     // -------------------- REGISTRO (SIMPLIFICADO) --------------------
-    let tempLegajo = '';
     let tempCode = '';
-    let selectedGrade = '';
 
     function initRegistro() {
         const modal = document.getElementById('registerModal');
@@ -369,14 +367,12 @@
         openBtn.onclick = () => {
             modal.classList.add('open');
             overlay.classList.add('open');
-            // Resetear campos
             legajoInput.value = '';
             codeInput.style.display = 'none';
             codeInput.value = '';
             codigoInfo.innerText = '';
             gradosContainer.innerHTML = '';
             confirmarBtn.style.display = 'none';
-            selectedGrade = '';
         };
         closeBtn.onclick = () => {
             modal.classList.remove('open');
@@ -391,40 +387,40 @@
                 alert('Ingresá un legajo válido (mínimo 4 dígitos)');
                 return;
             }
-            tempLegajo = `${force}-${legajo}`;
-            // Simular envío de código
             tempCode = Math.floor(100000 + Math.random() * 900000).toString();
             codigoInfo.innerText = `📱 Código de prueba: ${tempCode}`;
             codeInput.style.display = 'block';
-            // Al hacer clic en verificar (simplificado: comparar código)
-            const verificarTemp = () => {
-                if (codeInput.value === tempCode) {
-                    // Mostrar selección de grado
-                    gradosContainer.innerHTML = `
-                        <label>Grado (opcional)</label>
-                        <select id="gradoSelect">
-                            <option value="Prefiero no decirlo">🙈 Prefiero no decirlo</option>
-                            <option value="Soldado Voluntario">Soldado Voluntario</option>
-                            <option value="Cabo">Cabo</option>
-                            <option value="Sargento">Sargento</option>
-                            <option value="Teniente">Teniente</option>
-                            <option value="Capitán">Capitán</option>
-                        </select>
-                    `;
-                    confirmarBtn.style.display = 'block';
-                    codeInput.removeEventListener('change', verificarTemp);
-                } else {
-                    alert('Código incorrecto');
-                }
-            };
-            codeInput.addEventListener('change', verificarTemp);
+            codeInput.value = '';
             codeInput.focus();
         };
+
+        const verificarCodigo = () => {
+            if (codeInput.value === tempCode) {
+                gradosContainer.innerHTML = `
+                    <label>Grado (opcional)</label>
+                    <select id="gradoSelect">
+                        <option value="Prefiero no decirlo">🙈 Prefiero no decirlo</option>
+                        <option value="Soldado Voluntario">Soldado Voluntario</option>
+                        <option value="Cabo">Cabo</option>
+                        <option value="Sargento">Sargento</option>
+                        <option value="Teniente">Teniente</option>
+                        <option value="Capitán">Capitán</option>
+                    </select>
+                `;
+                confirmarBtn.style.display = 'block';
+                codeInput.removeEventListener('change', verificarCodigo);
+            } else {
+                alert('Código incorrecto');
+            }
+        };
+
+        codeInput.addEventListener('change', verificarCodigo);
 
         confirmarBtn.onclick = () => {
             const gradoSelect = document.getElementById('gradoSelect');
             const grado = gradoSelect ? gradoSelect.value : 'Prefiero no decirlo';
-            const isAdmin = (document.getElementById('legajoInput').value === 'TacticoAdmin2026');
+            const legajoValue = document.getElementById('legajoInput').value;
+            const isAdmin = (legajoValue === 'TacticoAdmin2026');
             const newUser = {
                 grade: grado,
                 force: forceSelect.options[forceSelect.selectedIndex].text,
