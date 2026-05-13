@@ -1,514 +1,87 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>TácticoMarket — Con Servicios y Registro Funcional</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--v:#6b8c3a;--v2:#4e6a28;--v3:#8aaa48;--n:#0a0c08;--n2:#111409;--g1:#1a1f12;--g2:#212918;--a:#c9b99a;--a2:#e8d9c0;--a3:#f0ede8;--r:#c0392b;--b:#1a73e8;--o:#d4780a;--gold:#c8a820;--cyan:#00c8d4}
-body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--n2)}
-::-webkit-scrollbar-thumb{background:rgba(143,180,58,0.3)}
-.btn-glow{background:var(--v);color:var(--n);padding:12px 28px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;border:none;cursor:pointer;clip-path:polygon(10px 0%,100% 0%,calc(100%-10px)100%,0%100%);transition:0.2s}
-.btn-glow:hover{background:var(--v3);transform:translateY(-2px)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:800;display:none;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--g1);border:1px solid rgba(143,180,58,.2);width:100%;max-width:550px;max-height:90vh;overflow-y:auto;clip-path:polygon(14px 0%,100% 0%,calc(100%-14px)100%,0%100%);padding:24px}
-.form-input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(143,180,58,.12);color:var(--a3);padding:10px 14px;clip-path:polygon(4px 0%,100% 0%,calc(100%-4px)100%,0%100%);margin-top:4px}
-.tab-buttons{display:flex;gap:12px;margin-bottom:20px;border-bottom:1px solid rgba(143,180,58,0.2);padding-bottom:8px}
-.tab-btn{background:none;border:none;color:var(--a);font-family:'Bebas Neue';font-size:20px;cursor:pointer;padding:4px 12px;opacity:0.6}
-.tab-btn.active{opacity:1;color:var(--v);border-bottom:2px solid var(--v)}
-.listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
-.listing-card{background:var(--g1);border:1px solid rgba(143,180,58,.08);padding:16px;cursor:pointer;transition:0.2s;border-radius:8px}
-.listing-card:hover{transform:translateY(-4px);border-color:rgba(143,180,58,.4)}
-.listing-thumb{height:140px;background:var(--g2);display:flex;align-items:center;justify-content:center;border-radius:8px;margin-bottom:12px}
-.listing-price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--v)}
-.chat-fab{position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:var(--v);border:none;cursor:pointer;font-size:24px;clip-path:polygon(8px 0%,100% 0%,calc(100%-8px)100%,0%100%);z-index:600;box-shadow:0 4px 20px rgba(143,180,58,.4)}
-.chat-window{position:fixed;bottom:90px;right:20px;width:340px;height:500px;background:var(--g1);border:1px solid rgba(143,180,58,.2);z-index:599;display:flex;flex-direction:column;transform:translateY(20px) scale(0.97);opacity:0;pointer-events:none;transition:0.25s;border-radius:12px}
-.chat-window.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
-.notification-toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--v);color:var(--n);padding:12px 24px;border-radius:40px;font-weight:bold;z-index:700;animation:fadeOut 3s forwards}
-@keyframes fadeOut{0%{opacity:1}70%{opacity:1}100%{opacity:0;visibility:hidden}}
-@media(max-width:768px){.main-grid{grid-template-columns:1fr!important}.sidebar-right{order:-1}}
-.force-btn{background:rgba(143,180,58,0.1);padding:8px 12px;border:1px solid var(--v);border-radius:8px;cursor:pointer;margin-right:6px;margin-bottom:6px}
-.force-btn.active{background:rgba(143,180,58,0.4)}
-.grade-option{display:block;width:100%;text-align:left;padding:10px;margin-bottom:6px;background:rgba(143,180,58,0.05);border:1px solid rgba(143,180,58,0.2);border-radius:8px;cursor:pointer}
-.grade-option.selected{background:rgba(143,180,58,0.2);border-color:var(--v)}
-</style>
+    <title>Prueba TácticoMarket - Botones</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #111; color: white; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #6b8c3a; border: none; color: white; border-radius: 5px; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border: 1px solid #6b8c3a; z-index: 1000; }
+        .modal.open { display: block; }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; }
+        .overlay.open { display: block; }
+    </style>
 </head>
 <body>
+    <h1>TácticoMarket - Prueba de botones</h1>
+    <button id="registerBtn">🎖️ REGISTRARSE</button>
+    <button id="walletBtn">💰 Billetera</button>
+    <button id="logoutBtn">🚪 Salir</button>
+    <div id="mensaje"></div>
 
-<nav style="position:sticky;top:0;background:rgba(10,12,8,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(143,180,58,0.12);padding:0 24px;min-height:64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:1400px;margin:0 auto;z-index:100">
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--v)">TÁCTICO<span style="color:var(--a)">MKT</span></div>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-    <div id="pointsDisplay" style="background:rgba(143,180,58,0.15);padding:6px 14px;border-radius:20px;font-family:monospace;font-weight:bold">⚡ 0 pts</div>
-    <button id="registerBtnNav" style="background:rgba(143,180,58,0.1);border:1px solid rgba(143,180,58,0.3);color:var(--a);padding:8px 20px;border-radius:30px;cursor:pointer;font-weight:bold">🎖 REGISTRARSE</button>
-    <button id="walletNav" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);padding:8px 16px;border-radius:30px;cursor:pointer">💰 Billetera</button>
-    <button id="transparencyBtn" style="background:none;border:1px solid rgba(143,180,58,0.2);padding:8px 16px;border-radius:30px;font-size:12px;cursor:pointer">📊 Transparencia</button>
-    <button id="logoutBtn" style="background:rgba(229,57,53,0.2);border:1px solid var(--r);padding:8px 16px;border-radius:30px;cursor:pointer;color:var(--r2);font-weight:bold">🚪 Salir</button>
-    <div id="adminPanelBtn" style="display:none;background:var(--gold);padding:6px 14px;border-radius:30px;cursor:pointer;font-weight:bold">👑 Admin</div>
-  </div>
-</nav>
-
-<div style="max-width:1400px;margin:30px auto 0;padding:40px 24px;background:linear-gradient(135deg,#0d1609,#1a2810);border-radius:20px;text-align:center">
-  <h1 style="font-family:'Bebas Neue';font-size:clamp(48px,10vw,90px)">COMPRÁ.<br><span style="color:var(--v)">VENDÉ.</span><span style="opacity:0.4"> AHORRÁ</span></h1>
-  <button class="btn-glow" id="exploreBtn" style="margin-top:20px">▸ EXPLORAR</button>
-</div>
-
-<div class="main-grid" style="max-width:1400px;margin:30px auto;padding:0 20px;display:grid;grid-template-columns:1fr 320px;gap:30px">
-  <div>
-    <div class="tab-buttons">
-      <button class="tab-btn active" data-tab="productos">🛒 Productos</button>
-      <button class="tab-btn" data-tab="servicios">🛠️ Servicios</button>
-    </div>
-    <div id="productosTab" style="display:block">
-      <div style="background:var(--g1);padding:20px;border-radius:16px;margin-bottom:24px">
-        <h2 style="font-family:'Bebas Neue';font-size:24px;display:flex;justify-content:space-between"><span>📋 Misiones</span><span id="streakCounter">🔥 Racha: 0</span></h2>
-        <div id="missionsContainer"></div>
-      </div>
-      <h2>🔥 Productos destacados</h2>
-      <div class="listings-grid" id="listingsGrid"></div>
-    </div>
-    <div id="serviciosTab" style="display:none">
-      <h2>🛠️ Servicios profesionales</h2>
-      <div class="listings-grid" id="serviciosGrid"></div>
-    </div>
-    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px;margin-top:24px;border-radius:16px;text-align:center">
-      <h3>🎁 Caja de Botín</h3>
-      <p>🔑 Llaves: <strong id="llavesCount" style="color:var(--gold);font-size:24px">0</strong></p>
-      <button id="abrirCajaBtn" style="background:var(--gold);border:none;padding:10px 24px;border-radius:40px;cursor:pointer;font-weight:bold">ABRIR CAJA</button>
-      <div id="ultimoPremio" style="margin-top:8px"></div>
+    <!-- Modal de registro simplificado -->
+    <div class="overlay" id="modalOverlay"></div>
+    <div class="modal" id="registerModal">
+        <h2>Registro Militar</h2>
+        <p>Ingresá tu legajo (cualquier número de 6 dígitos) y el código 123456</p>
+        <input type="text" id="legajo" placeholder="Legajo" style="width:100%; padding:8px; margin:5px 0;">
+        <input type="text" id="code" placeholder="Código SMS" style="width:100%; padding:8px; margin:5px 0;">
+        <button id="verifyBtn">Verificar</button>
+        <button id="closeModal">Cerrar</button>
     </div>
 
-    <!-- COMPRAS GRUPALES (ubicado correctamente) -->
-    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
-      <h3 style="font-family:'Bebas Neue';font-size:22px">🤝 Compras grupales</h3>
-      <div id="gruposContainer"></div>
-      <button id="crearGrupoBtn" style="margin-top:8px;background:var(--v);border:none;padding:8px;width:100%;border-radius:30px;cursor:pointer">➕ Iniciar nueva compra grupal</button>
-    </div>
+    <script>
+        // Limpiar localStorage para evitar conflictos
+        // localStorage.clear(); // (opcional, descomentar si hay datos corruptos)
 
-    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
-      <h3>🏆 Ranking de unidades</h3>
-      <div id="rankingsContainer"></div>
-    </div>
-  </div>
+        const registerBtn = document.getElementById('registerBtn');
+        const walletBtn = document.getElementById('walletBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const modal = document.getElementById('registerModal');
+        const overlay = document.getElementById('modalOverlay');
+        const closeModal = document.getElementById('closeModal');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const mensaje = document.getElementById('mensaje');
 
-  <div class="sidebar-right">
-    <div style="background:var(--g1);padding:20px;border-radius:16px;text-align:center">
-      <div style="font-size:64px">🎖️</div>
-      <div id="sidebarGrade" style="font-family:'Bebas Neue';font-size:22px">Invitado</div>
-      <div id="sidebarForce" style="font-size:12px;opacity:0.6">Regístrate</div>
-      <hr style="margin:12px 0">
-      <div><strong>🔗 Código:</strong> <span id="refCodeDisplay">---</span> <button id="copyRefBtn" style="background:none;border:1px solid var(--v);padding:2px 8px;border-radius:20px;cursor:pointer">Copiar</button></div>
-      <div><strong>💰 Comisiones:</strong> <span id="totalComisiones">$0</span></div>
-    </div>
-    <div style="background:var(--g1);padding:20px;border-radius:16px;margin-top:16px"><h3>🌟 Top Reclutadores</h3><div id="topReferidosList"></div></div>
-    <div style="background:var(--g1);padding:20px;border-radius:16px;margin-top:16px"><h3>📖 Historias de éxito</h3><div id="successStoriesList" style="max-height:200px;overflow-y:auto"></div><button id="addStoryBtn" style="width:100%;background:var(--v);border:none;padding:8px;border-radius:30px;margin-top:8px;cursor:pointer">✍️ Compartir</button></div>
-    <div style="background:linear-gradient(135deg,#1a2810,#0d1609);padding:16px;border-radius:16px;margin-top:16px;text-align:center;border:1px solid rgba(143,180,58,0.2)">
-      <div>💚</div><div style="font-weight:bold">Apoyá TácticoMarket</div>
-      <div style="display:flex;gap:8px;justify-content:center;margin:8px 0">
-        <button class="donate-link" data-monto="500" style="background:var(--gold);border:none;padding:6px 12px;border-radius:30px;cursor:pointer">$500</button>
-        <button class="donate-link" data-monto="1000" style="background:var(--gold);border:none;padding:6px 12px;border-radius:30px;cursor:pointer">$1.000</button>
-        <button class="donate-link" data-monto="2000" style="background:var(--gold);border:none;padding:6px 12px;border-radius:30px;cursor:pointer">$2.000</button>
-      </div>
-      <div id="donationProgress" style="background:var(--n);border-radius:30px;height:8px;overflow:hidden"><div id="donationFill" style="width:0%;height:100%;background:var(--v)"></div></div>
-      <div style="font-size:11px;margin-top:4px">Recaudado: <strong id="donationRaised">$0</strong> / $500.000</div>
-      <p class="form-label" style="font-size:9px;margin-top:6px">✅ Voluntario · Gratis siempre</p>
-    </div>
-  </div>
-</div>
+        function showMessage(msg) {
+            mensaje.innerHTML = msg;
+            setTimeout(() => mensaje.innerHTML = '', 3000);
+        }
 
-<button class="chat-fab" id="chatFab">💬</button>
-<div class="chat-window" id="chatWindow"><div style="padding:12px;border-bottom:1px solid rgba(143,180,58,0.1);display:flex;justify-content:space-between"><span>🗣️ Chat</span><button id="closeChat" style="background:none;border:none;color:var(--a);cursor:pointer">✕</button></div><div id="chatMessages" style="flex:1;padding:12px;overflow-y:auto"></div><div style="padding:12px;display:flex;gap:8px"><input id="chatInput" placeholder="Mensaje..." style="flex:1;background:rgba(255,255,255,0.05);border:none;padding:8px;border-radius:30px;color:white"><button id="chatSend" style="background:var(--v);border:none;padding:8px 16px;border-radius:30px;cursor:pointer">Enviar</button></div></div>
+        registerBtn.onclick = () => {
+            modal.classList.add('open');
+            overlay.classList.add('open');
+        };
+        closeModal.onclick = () => {
+            modal.classList.remove('open');
+            overlay.classList.remove('open');
+        };
+        overlay.onclick = closeModal.onclick;
 
-<!-- MODALES -->
-<div class="modal-overlay" id="registerModal"><div class="modal"><div style="text-align:right"><button id="closeRegModal" style="background:none;border:none;color:var(--a);font-size:24px;cursor:pointer">✕</button></div>
-<div id="regStepContainer"><div id="stepLegajo"><h2>Verificación militar</h2><div class="form-group"><label>FUERZA</label><div id="forceButtons" style="display:flex;gap:8px;flex-wrap:wrap"></div></div><div class="form-group"><label>LEGAJO</label><div style="display:flex"><span id="legajoPrefix" style="background:var(--g2);padding:10px;border:1px solid rgba(143,180,58,0.2)">EA-</span><input id="legajoInput" class="form-input" placeholder="123456"></div></div><div id="legajoError" style="color:var(--r2);display:none"></div><button id="sendCodeBtn" class="btn-glow" style="width:100%">📱 Enviar código</button></div>
-<div id="stepCode" style="display:none"><h2>Código SMS</h2><p id="smsInfo"></p><input id="codeInput" class="form-input" placeholder="000000"><div id="codeError" style="color:var(--r2);display:none"></div><button id="verifyCodeBtn" class="btn-glow" style="width:100%">Verificar</button><button id="resendCodeBtn">Reenviar</button><button id="backToLegajo">← Volver</button></div>
-<div id="stepGrade" style="display:none"><h2>Completá perfil</h2><div id="gradesContainer"></div><div style="display:flex;gap:8px"><button id="skipGradeBtn">🙈 Prefiero no decirlo</button><button id="confirmGradeBtn" class="btn-glow" disabled>Confirmar</button></div></div></div></div></div>
+        verifyBtn.onclick = () => {
+            const legajo = document.getElementById('legajo').value;
+            const code = document.getElementById('code').value;
+            if (code === '123456') {
+                showMessage('✅ Registro exitoso. Guardando usuario...');
+                localStorage.setItem('tacticoUser', JSON.stringify({ grade: 'Soldado', points: 500 }));
+                modal.classList.remove('open');
+                overlay.classList.remove('open');
+                alert('Usuario registrado. Ahora podés usar la plataforma.');
+            } else {
+                showMessage('❌ Código incorrecto. Usá 123456');
+            }
+        };
 
-<div class="modal-overlay" id="storyModal"><div class="modal"><h3>Compartí tu historia</h3><textarea id="storyText" rows="3" class="form-input" placeholder="¿Cómo TácticoMarket te ayudó?"></textarea><button id="submitStoryBtn" class="btn-glow">Publicar</button><button id="closeStoryModal">Cerrar</button></div></div>
-<div class="modal-overlay" id="transparencyModal"><div class="modal"><h2>📊 Transparencia</h2><div style="margin:16px 0"><div>💰 Total recaudado: <strong id="transparencyTotal">$0</strong></div><div style="background:var(--n);border-radius:30px;height:8px;margin:8px 0"><div id="transparencyBar" style="width:0%;height:100%;background:var(--v)"></div></div><div>Meta mensual: $500.000 · <span id="transparencyPercent">0%</span></div></div><div style="background:var(--n);padding:12px;border-radius:12px"><h3>📌 ¿A dónde va?</h3><div>🖥️ Servidores: $150.000</div><div>💻 Desarrollo: $250.000</div><div>📞 Soporte: $100.000</div><div><strong>Total: $550.000/mes</strong></div></div><button id="closeTransparencyModal" class="btn-glow">Cerrar</button></div></div>
-<div class="modal-overlay" id="adminModal"><div class="modal"><h2>👑 Panel de Administración</h2><div><h3>Usuarios registrados</h3><div id="adminUsersList" style="max-height:200px;overflow-y:auto"></div><button id="adminClearAllBtn" style="background:var(--r);color:white;border:none;padding:8px;margin-top:8px;border-radius:30px;cursor:pointer">⚠️ Borrar todos los datos</button></div><div><h3>Transacciones (escrow)</h3><div id="adminEscrowList" style="max-height:150px;overflow-y:auto"></div><button id="adminReleaseEscrowBtn" style="background:var(--v);margin-top:8px;padding:6px;border-radius:30px;cursor:pointer">Liberar pago seleccionado</button></div><button id="closeAdminModal" class="btn-glow" style="margin-top:16px">Cerrar</button></div></div>
+        walletBtn.onclick = () => {
+            let user = localStorage.getItem('tacticoUser');
+            if (user) alert('💰 Billetera: $0. Puntos: 500');
+            else alert('Primero registrate');
+        };
 
-<footer style="background:var(--n2);padding:24px;text-align:center;border-top:1px solid rgba(143,180,58,0.1);margin-top:40px">
-  <p>© 2025 TácticoMarket — Ayuda mutua entre militares argentinos</p>
-  <p style="font-size:11px;opacity:0.4;margin-top:8px"><a href="#" id="termsLink" style="color:var(--a);text-decoration:none">Términos</a> | <a href="#" id="privacyLink" style="color:var(--a);text-decoration:none">Privacidad</a></p>
-</footer>
-
-<script>
-// ======================== ADMIN SECRET ========================
-const ADMIN_SECRET = "TacticoAdmin2026";
-
-// ======================== DATOS GLOBALES ========================
-let currentUser = JSON.parse(localStorage.getItem('tacticoUser')) || null;
-let listings = JSON.parse(localStorage.getItem('listings')) || [
-  { id: 1, title: 'Borceguí militar talla 42', price: 18000, svg: `<svg viewBox="0 0 200 140" width="80"><ellipse cx="105" cy="128" rx="55" ry="6" fill="rgba(0,0,0,0.5)"/><path d="M42 118 Q40 122 45 125 L165 125 Q170 124 168 119 L155 110 L55 110 Z" fill="#1a1208"/><path d="M42 118 L55 110 L155 110 L168 119 Q155 115 42 118Z" fill="#221a0c"/><line x1="60" y1="124" x2="60" y2="118" stroke="#0d0a05" stroke-width="1.5"/><line x1="75" y1="125" x2="75" y2="118" stroke="#0d0a05" stroke-width="1.5"/><line x1="90" y1="125" x2="90" y2="118" stroke="#0d0a05" stroke-width="1.5"/><line x1="105" y1="125" x2="105" y2="118" stroke="#0d0a05" stroke-width="1.5"/><line x1="120" y1="124" x2="120" y2="118" stroke="#0d0a05" stroke-width="1.5"/><line x1="135" y1="123" x2="135" y2="118" stroke="#0d0a05" stroke-width="1.5"/><path d="M58 112 L58 48 Q58 38 68 34 L120 30 Q132 28 138 38 L140 50 L148 108 L155 112 Z" fill="#2c2218"/><path d="M148 108 L140 50 L138 38 Q144 44 148 55 L155 112 Z" fill="#1e1710"/><path d="M55 110 Q50 108 48 105 Q46 95 54 88 L68 82 L68 110 Z" fill="#221a0e"/><path d="M55 108 Q50 106 49 103 Q47 96 54 90 L66 85" stroke="#3a2e1a" stroke-width="1" fill="none"/><line x1="90" y1="34" x2="88" y2="112" stroke="#3d3020" stroke-width="1" stroke-dasharray="4,3"/><line x1="115" y1="31" x2="113" y2="112" stroke="#3d3020" stroke-width="1" stroke-dasharray="4,3"/><path d="M82 34 Q90 28 100 27 Q112 27 118 34 L116 60 Q100 56 84 60 Z" fill="#332818"/><path d="M84 60 L82 34 Q90 30 100 29 Q110 29 116 34 L114 58 Q100 54 84 58Z" fill="#2a2010"/><circle cx="88" cy="45" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="112" cy="45" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="87" cy="57" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="113" cy="57" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="86" cy="69" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="114" cy="69" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="85" cy="81" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><circle cx="115" cy="81" r="3" fill="#111" stroke="#4a3a22" stroke-width="1"/><path d="M84 93 Q84 90 88 90 Q92 90 92 93" stroke="#6a5530" stroke-width="1.5" fill="none"/><path d="M116 93 Q116 90 112 90 Q108 90 108 93" stroke="#6a5530" stroke-width="1.5" fill="none"/><line x1="91" y1="45" x2="109" y2="57" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="91" y1="57" x2="109" y2="45" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="90" y1="57" x2="110" y2="69" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="90" y1="69" x2="110" y2="57" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="89" y1="69" x2="111" y2="81" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="89" y1="81" x2="111" y2="69" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><line x1="88" y1="81" x2="112" y2="93" stroke="#d4c090" stroke-width="1.2" opacity="0.85"/><circle cx="100" cy="98" r="4" fill="#c8b070" opacity="0.9"/><path d="M96 98 Q100 103 104 98" stroke="#a89050" stroke-width="1" fill="none"/><path d="M68 34 L70 22 Q75 16 82 14 L118 12 Q126 12 130 18 L132 28 Q124 24 118 24 L82 26 Q74 28 72 34Z" fill="#332818"/><line x1="78" y1="14" x2="76" y2="34" stroke="#251e0f" stroke-width="1"/><line x1="122" y1="13" x2="120" y2="33" stroke="#251e0f" stroke-width="1"/><path d="M70 22 Q75 16 82 14 L118 12 Q126 12 130 18" stroke="#4a3820" stroke-width="1.5" fill="none"/><path d="M135 60 Q142 65 148 80 L150 108 L140 108 L138 72 Z" fill="#1e1710" opacity="0.7"/><path d="M72 38 Q75 30 82 26 L95 24 Q88 28 84 38 Z" fill="rgba(255,240,180,0.06)"/><text x="93" y="107" font-family="monospace" font-size="5" fill="rgba(150,130,80,0.4)" letter-spacing="1">TÁCTICO</text></svg>`, loc: 'Córdoba', seller: 'Sgt. Pérez' },
-  { id: 2, title: 'Uniforme UCA verde oliva', price: 9500, svg: `<svg viewBox="0 0 200 155" width="80"><ellipse cx="100" cy="150" rx="52" ry="5" fill="rgba(0,0,0,0.45)"/><path d="M68 95 L62 148 L82 148 L86 110 L100 110 L100 148 L100 148 L100 110 L114 110 L118 148 L138 148 L132 95 Z" fill="#4a5a32"/><path d="M68 95 L62 148 L72 148 L75 95Z" fill="#3a4a25"/><path d="M132 95 L138 148 L128 148 L125 95Z" fill="#3a4a25"/><line x1="100" y1="95" x2="100" y2="148" stroke="#2e3a1a" stroke-width="1.5"/><path d="M70 100 Q75 97 80 102 Q76 107 70 104Z" fill="#3a4a25" opacity="0.7"/><path d="M85 115 Q92 112 95 118 Q90 122 84 119Z" fill="#5a6e3a" opacity="0.6"/><path d="M108 108 Q115 105 119 112 Q113 116 107 112Z" fill="#3a4a25" opacity="0.6"/><path d="M122 125 Q128 122 132 128 Q127 133 121 129Z" fill="#5a6e3a" opacity="0.5"/><path d="M72 130 Q78 127 82 134 Q76 138 71 134Z" fill="#6b7a42" opacity="0.5"/><path d="M88 140 Q95 137 98 143 Q93 147 87 143Z" fill="#3a4a25" opacity="0.4"/><rect x="70" y="110" width="18" height="20" rx="1" fill="#3d4e28" stroke="#2e3a1a" stroke-width="0.8"/><line x1="79" y1="110" x2="79" y2="130" stroke="#2a3618" stroke-width="0.7"/><rect x="72" y="112" width="14" height="3" rx="1" fill="#344422" opacity="0.8"/><rect x="112" y="110" width="18" height="20" rx="1" fill="#3d4e28" stroke="#2e3a1a" stroke-width="0.8"/><line x1="121" y1="110" x2="121" y2="130" stroke="#2a3618" stroke-width="0.7"/><rect x="114" y="112" width="14" height="3" rx="1" fill="#344422" opacity="0.8"/><rect x="65" y="92" width="70" height="7" rx="1" fill="#38481e" stroke="#2a3614" stroke-width="0.8"/><rect x="94" y="93" width="12" height="5" rx="1" fill="#5a5030" stroke="#3a3020" stroke-width="0.8"/><line x1="100" y1="93" x2="100" y2="98" stroke="#3a3020" stroke-width="1"/><path d="M58 52 L52 96 L148 96 L142 52 Q130 44 118 42 L100 40 L82 42 Q70 44 58 52Z" fill="#4e6030"/><path d="M142 52 L148 96 L138 96 L132 54Z" fill="#3d4e25"/><path d="M58 52 L52 96 L62 96 L68 54Z" fill="#3d4e25"/><path d="M60 60 Q68 57 72 64 Q66 69 59 65Z" fill="#3a4a25" opacity="0.65"/><path d="M75 72 Q83 69 87 76 Q81 81 74 77Z" fill="#5f7238" opacity="0.55"/><path d="M112 58 Q120 55 124 63 Q118 68 111 63Z" fill="#3a4a25" opacity="0.6"/><path d="M128 76 Q135 73 138 81 Q132 85 127 81Z" fill="#6a7e40" opacity="0.5"/><path d="M88 82 Q96 79 100 87 Q94 91 87 87Z" fill="#3a4a25" opacity="0.5"/><path d="M65 85 Q70 82 74 88 Q69 92 64 88Z" fill="#5f7238" opacity="0.4"/><rect x="65" y="60" width="22" height="20" rx="1" fill="#435626" stroke="#2e3a18" stroke-width="0.8"/><path d="M65 60 L76 56 L87 60Z" fill="#344020" stroke="#2e3a18" stroke-width="0.6"/><line x1="76" y1="56" x2="76" y2="80" stroke="#2e3a18" stroke-width="0.7"/><rect x="113" y="60" width="22" height="20" rx="1" fill="#435626" stroke="#2e3a18" stroke-width="0.8"/><path d="M113 60 L124 56 L135 60Z" fill="#344020" stroke="#2e3a18" stroke-width="0.6"/><line x1="124" y1="56" x2="124" y2="80" stroke="#2e3a18" stroke-width="0.7"/><circle cx="100" cy="56" r="1.8" fill="#2e3a18" stroke="#1e2810" stroke-width="0.5"/><circle cx="100" cy="66" r="1.8" fill="#2e3a18" stroke="#1e2810" stroke-width="0.5"/><circle cx="100" cy="76" r="1.8" fill="#2e3a18" stroke="#1e2810" stroke-width="0.5"/><circle cx="100" cy="86" r="1.8" fill="#2e3a18" stroke="#1e2810" stroke-width="0.5"/><line x1="100" y1="48" x2="100" y2="94" stroke="#2e3a18" stroke-width="0.5" stroke-dasharray="1,6" opacity="0.6"/><path d="M88 42 L88 52 Q100 56 112 52 L112 42 Q100 38 88 42Z" fill="#4a5c2c"/><path d="M88 42 L88 52 Q94 55 100 55" fill="#3d4e25"/><path d="M112 42 L112 52 Q106 55 100 55" fill="#3d4e25"/><path d="M58 52 Q44 54 36 62 L40 80 Q50 74 62 72 L68 54Z" fill="#4e6030"/><path d="M36 62 L40 80 Q46 76 40 66Z" fill="#3d4e25"/><path d="M44 62 Q50 59 54 65 Q49 69 43 65Z" fill="#3a4a25" opacity="0.6"/><rect x="34" y="77" width="10" height="6" rx="1" fill="#38481e" stroke="#2a3614" stroke-width="0.7"/><path d="M142 52 Q156 54 164 62 L160 80 Q150 74 138 72 L132 54Z" fill="#4e6030"/><path d="M164 62 L160 80 Q154 76 160 66Z" fill="#3d4e25"/><rect x="152" y="60" width="10" height="7" rx="0.5" fill="#74b9ff" opacity="0.9"/><rect x="152" y="62" width="10" height="1.5" fill="#fff" opacity="0.9"/><rect x="152" y="64" width="10" height="1.5" fill="#74b9ff" opacity="0.9"/><circle cx="157" cy="63.5" r="1.5" fill="#ffd700" opacity="0.8"/><rect x="156" y="77" width="10" height="6" rx="1" fill="#38481e" stroke="#2a3614" stroke-width="0.7"/><path d="M80 32 Q100 28 120 32 L122 36 Q100 33 78 36Z" fill="#38481e" stroke="#2a3614" stroke-width="0.5"/><path d="M80 32 Q80 18 100 16 Q120 18 120 32Z" fill="#4a5c2c"/><path d="M84 24 Q90 21 94 26 Q89 29 83 26Z" fill="#3a4a25" opacity="0.7"/><path d="M106 20 Q112 18 115 24 Q110 27 105 23Z" fill="#5f7238" opacity="0.6"/><rect x="80" y="30" width="40" height="3" fill="#2e3a18" opacity="0.8"/><circle cx="100" cy="23" r="3.5" fill="#d4a820" opacity="0.9"/><path d="M100 20 L101 22.5 L103.5 22.5 L101.5 24 L102.3 26.5 L100 25 L97.7 26.5 L98.5 24 L96.5 22.5 L99 22.5 Z" fill="#8b6e10" opacity="0.8"/><line x1="80" y1="32" x2="80" y2="36" stroke="#2a3614" stroke-width="0.8"/><line x1="120" y1="32" x2="120" y2="36" stroke="#2a3614" stroke-width="0.8"/><text x="87" y="152" font-family="monospace" font-size="5" fill="rgba(150,180,100,0.5)" letter-spacing="0.5">TALLA M · UCA</text></svg>`, loc: 'Campo Mayo', seller: 'Cb. Martínez' }
-];
-let servicios = JSON.parse(localStorage.getItem('servicios')) || [
-  { id: 101, title: 'Pintura de interiores', price: 15000, category: 'Pintura', loc: 'Capital Federal', seller: 'Tte. García', duration: '2 días' },
-  { id: 102, title: 'Asesoría legal laboral', price: 8000, category: 'Abogacía', loc: 'Córdoba', seller: 'Dra. Laura', duration: '1 hora' },
-  { id: 103, title: 'Clases de preparación física', price: 5000, category: 'Deportes', loc: 'Mendoza', seller: 'Sgto. López', duration: '4 sesiones' }
-];
-let missions = JSON.parse(localStorage.getItem('missions')) || [
-  { id: 'login', title: '✅ Iniciar sesión hoy', done: false, reward: 20, progress: 0, target: 1 },
-  { id: 'publish', title: '📦 Publicar un artículo', done: false, reward: 50, progress: 0, target: 1 },
-  { id: 'service', title: '🛠️ Contratar un servicio', done: false, reward: 40, progress: 0, target: 1 }
-];
-let llaves = parseInt(localStorage.getItem('llaves')) || 0;
-let userComisiones = parseInt(localStorage.getItem('userComisiones')) || 0;
-let rankings = { "Córdoba": 120, "Buenos Aires": 95, "Mendoza": 78 };
-let successStories = JSON.parse(localStorage.getItem('successStories')) || [];
-let totalDonations = parseInt(localStorage.getItem('totalDonations')) || 12500;
-let escrowTransactions = JSON.parse(localStorage.getItem('escrowTransactions')) || [];
-let streak = parseInt(localStorage.getItem('streak')) || 0;
-let lastLoginDate = localStorage.getItem('lastLoginDate') || '';
-let referidosRegistrados = JSON.parse(localStorage.getItem('referidosList')) || [];
-let gruposActivos = JSON.parse(localStorage.getItem('gruposActivos')) || [
-  { id: 1, producto: 'Botas de combate talla 42', precioUnitario: 18000, meta: 10, participantes: 3, descuento: 0.15, imagen: '👢' },
-  { id: 2, producto: 'Mochila táctica 60L', precioUnitario: 15000, meta: 8, participantes: 4, descuento: 0.20, imagen: '🎒' }
-];
-
-// Grados
-const gradesData = {
-  EA: { label: 'Ejército', items: ['Soldado Voluntario','Cabo','Sargento','Teniente','Capitán'] },
-  AR: { label: 'Armada', items: ['Marinero','Cabo','Suboficial','Teniente'] },
-  FA: { label: 'FAA', items: ['Soldado','Cabo','Suboficial','Teniente'] },
-  CV: { label: 'Personal Civil', items: ['Contratado','Planta'] },
-  ANON: { label: 'Anónimo', items: ['Prefiero no decirlo'] }
-};
-const validLegajos = new Map([
-  ['EA-123456', {}], ['EA-789012', {}], ['AR-111222', {}], ['FA-333444', {}], ['CV-555666', {}]
-]);
-
-// ======================== FUNCIONES BASE ========================
-function saveUser(user) { localStorage.setItem('tacticoUser', JSON.stringify(user)); currentUser = user; updateUI(); }
-function addPoints(amount, withFlash=false) { if(currentUser) { currentUser.points = (currentUser.points||0)+amount; saveUser(currentUser); } }
-function showNotification(msg) { let toast=document.createElement('div'); toast.className='notification-toast'; toast.innerText=msg; document.body.appendChild(toast); setTimeout(()=>toast.remove(),3000); }
-function completeMission(missionId) {
-  let m = missions.find(m=>m.id===missionId);
-  if(m && !m.done) { m.progress++; if(m.progress>=m.target) { m.done=true; addPoints(m.reward,true); llaves++; localStorage.setItem('llaves',llaves); showNotification(`🎉 +${m.reward} pts y +1 llave`); } localStorage.setItem('missions',JSON.stringify(missions)); updateMissionsUI(); }
-}
-function updateMissionsUI() {
-  document.getElementById('missionsContainer').innerHTML = missions.map(m=>`<div style="background:var(--g2);padding:10px;margin-bottom:8px;border-radius:12px"><div>${m.title}</div><div>Progreso: ${m.progress}/${m.target}</div>${!m.done?`<button class="mock-mission" data-id="${m.id}" style="background:var(--v);border:none;padding:4px 8px;border-radius:20px;margin-top:6px;cursor:pointer">Simular</button>`:''}</div>`).join('');
-  document.querySelectorAll('.mock-mission').forEach(btn=>btn.addEventListener('click',()=>{ let id=btn.getAttribute('data-id'); if(id==='publish') addPoints(50,true); if(id==='service') completeMission('service'); if(id==='login') completeMission('login'); completeMission(id); updateUI(); }));
-}
-function checkDailyLogin() {
-  let today=new Date().toDateString();
-  if(lastLoginDate!==today && currentUser){
-    if(lastLoginDate && (new Date()-new Date(lastLoginDate))/(1000*3600*24)<=1) streak++; else streak=1;
-    localStorage.setItem('streak',streak); localStorage.setItem('lastLoginDate',today);
-    document.getElementById('streakCounter').innerHTML=`🔥 Racha: ${streak}`;
-    addPoints(streak*10,true); completeMission('login');
-  }
-}
-function updateTopReferidos(){
-  let refCount={}; referidosRegistrados.forEach(r=>{refCount[r.referrerCode]=(refCount[r.referrerCode]||0)+1;});
-  let sorted=Object.entries(refCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('topReferidosList').innerHTML=sorted.map(([code,count])=>`<div>${code} → ${count}</div>`).join('')||'<div>Sin referidos</div>';
-}
-function updateRankingUI(){
-  document.getElementById('rankingsContainer').innerHTML=Object.entries(rankings).sort((a,b)=>b[1]-a[1]).map(([unit,points])=>`<div style="display:flex;justify-content:space-between"><span>📍 ${unit}</span><span>${points} pts</span></div>`).join('');
-}
-function updateDonationUI(){
-  let goal=500000; document.getElementById('donationRaised').innerHTML=`$${totalDonations.toLocaleString()}`;
-  let percent=Math.min((totalDonations/goal)*100,100); document.getElementById('donationFill').style.width=`${percent}%`;
-  document.getElementById('transparencyTotal').innerHTML=`$${totalDonations.toLocaleString()}`;
-  document.getElementById('transparencyBar').style.width=`${percent}%`; document.getElementById('transparencyPercent').innerHTML=Math.floor(percent)+'%';
-}
-function updateSuccessStoriesUI(){
-  document.getElementById('successStoriesList').innerHTML=successStories.slice(0,5).map((s,i)=>`<div><strong>${s.author}</strong> · ${s.date}<br>${s.text.substring(0,60)}...<button class="voteStory" data-idx="${i}" style="background:none;border:none;color:var(--gold);cursor:pointer">👍 ${s.votes}</button></div>`).join('')||'<div>Compartí tu historia</div>';
-  document.querySelectorAll('.voteStory').forEach(btn=>btn.addEventListener('click',()=>{successStories[btn.getAttribute('data-idx')].votes++; localStorage.setItem('successStories',JSON.stringify(successStories)); updateSuccessStoriesUI();}));
-}
-function addStory(text){
-  if(text.trim()){ successStories.unshift({text, votes:0, date:new Date().toLocaleDateString(), author:currentUser?.grade||'Anónimo'}); localStorage.setItem('successStories',JSON.stringify(successStories)); updateSuccessStoriesUI(); showNotification('Historia publicada'); }
-}
-function abrirCaja(){
-  if(llaves<=0){ showNotification('Sin llaves'); return; }
-  llaves--; localStorage.setItem('llaves',llaves); updateUI();
-  let premios=[{nombre:'$500 ARS',tipo:'money',valor:500},{nombre:'100 XP',tipo:'xp',valor:100}];
-  let premio=premios[Math.floor(Math.random()*premios.length)];
-  if(premio.tipo==='money'){ userComisiones+=premio.valor; localStorage.setItem('userComisiones',userComisiones); showNotification(`🎁 ${premio.nombre} agregado a tu billetera`); }
-  if(premio.tipo==='xp') addPoints(premio.valor,false);
-  document.getElementById('ultimoPremio').innerHTML=`🎉 ${premio.nombre}`;
-  setTimeout(()=>document.getElementById('ultimoPremio').innerHTML='',3000);
-}
-function createTransaction(item, tipo, precio) {
-  let transaction = { id: Date.now(), itemId: item.id, tipo, monto: precio, comprador: currentUser?.grade || 'Anónimo', vendedor: item.seller, estado: 'retenido', fecha: new Date().toISOString() };
-  escrowTransactions.push(transaction);
-  localStorage.setItem('escrowTransactions', JSON.stringify(escrowTransactions));
-  showNotification(`💰 Pago retenido (${tipo}). Se liberará en 10s.`);
-  setTimeout(() => {
-    let t = escrowTransactions.find(tx => tx.id === transaction.id);
-    if(t && t.estado === 'retenido') { t.estado = 'liberado'; localStorage.setItem('escrowTransactions', JSON.stringify(escrowTransactions)); showNotification(`✅ Pago liberado al vendedor (simulado)`); }
-  }, 10000);
-  addPoints(50, true);
-  if(tipo === 'servicio') completeMission('service');
-}
-
-// ======================== GANGA ========================
-function calcularPrecioPromedioPorCategoria(tipo) {
-  const items = tipo === 'producto' ? listings : servicios;
-  if (items.length === 0) return 0;
-  const total = items.reduce((a,b) => a + b.price, 0);
-  return total / items.length;
-}
-function marcarGangas() {
-  const avgProd = calcularPrecioPromedioPorCategoria('producto');
-  const prodGanga = listings.filter(p => avgProd > 0 && p.price <= avgProd * 0.7);
-  const avgServ = calcularPrecioPromedioPorCategoria('servicio');
-  const servGanga = servicios.filter(s => avgServ > 0 && s.price <= avgServ * 0.7);
-  return { productosGanga: prodGanga, serviciosGanga: servGanga };
-}
-function renderListingsConGanga() {
-  const { productosGanga } = marcarGangas();
-  const grid = document.getElementById('listingsGrid');
-  grid.innerHTML = listings.map(l => {
-    const esGanga = productosGanga.some(g => g.id === l.id);
-    return `<div class="listing-card">
-      <div class="listing-thumb">${l.svg}</div>
-      <div><strong>${l.title}</strong> ${esGanga ? '<span style="background:var(--r);color:white;padding:2px 8px;border-radius:20px;font-size:10px;margin-left:6px">🔥 GANGA -30%</span>' : ''}</div>
-      <div class="listing-price">$${l.price.toLocaleString()}</div>
-      <div>📍 ${l.loc} · ${l.seller}</div>
-      <button class="buy-product" data-id="${l.id}" data-price="${l.price}" style="margin-top:8px;background:var(--v);border:none;padding:8px;border-radius:30px;width:100%;cursor:pointer">Comprar</button>
-      <button class="share-savings" data-title="${l.title}" data-price="${l.price}" style="margin-top:4px;background:#25D366;border:none;padding:4px;border-radius:20px;cursor:pointer;font-size:11px;width:100%">📲 Contar ahorro</button>
-    </div>`;
-  }).join('');
-  document.querySelectorAll('.buy-product').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(btn.getAttribute('data-id'));
-      const item = listings.find(l => l.id === id);
-      if (currentUser) {
-        if (marcarGangas().productosGanga.some(g => g.id === id)) alert('🔥 ¡GANGA! Precio 30% menor al promedio.');
-        createTransaction(item, 'producto', item.price);
-      } else alert('Regístrate primero');
-    });
-  });
-  document.querySelectorAll('.share-savings').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const title = btn.getAttribute('data-title');
-      const price = btn.getAttribute('data-price');
-      const text = `🎖️ ¡Mirá lo que encontré en TácticoMarket! *${title}* por solo $${parseInt(price).toLocaleString()} ARS. ¡Ahorro seguro! https://tacticomarket2026.netlify.app/ref/${currentUser?.refCode || 'invitado'}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-    });
-  });
-}
-function renderServiciosConGanga() {
-  const { serviciosGanga } = marcarGangas();
-  const grid = document.getElementById('serviciosGrid');
-  grid.innerHTML = servicios.map(s => {
-    const esGanga = serviciosGanga.some(g => g.id === s.id);
-    return `<div class="listing-card">
-      <div class="listing-thumb" style="font-size:40px">🛠️</div>
-      <div><strong>${s.title}</strong> ${esGanga ? '<span style="background:var(--r);color:white;padding:2px 8px;border-radius:20px;font-size:10px">🔥 GANGA -30%</span>' : ''}</div>
-      <div class="listing-price">$${s.price.toLocaleString()}</div>
-      <div>📍 ${s.loc} · 🕒 ${s.duration}</div>
-      <button class="hire-service" data-id="${s.id}" data-price="${s.price}" style="margin-top:8px;background:var(--b);border:none;padding:8px;border-radius:30px;width:100%;cursor:pointer">Contratar</button>
-      <button class="share-savings" data-title="${s.title}" data-price="${s.price}" style="margin-top:4px;background:#25D366;border:none;padding:4px;border-radius:20px;cursor:pointer;font-size:11px;width:100%">📲 Contar ahorro</button>
-    </div>`;
-  }).join('');
-  document.querySelectorAll('.hire-service').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(btn.getAttribute('data-id'));
-      const item = servicios.find(s => s.id === id);
-      if (currentUser) {
-        if (marcarGangas().serviciosGanga.some(g => g.id === id)) alert('🔥 ¡SERVICIO EN GANGA! Precio 30% menor al promedio.');
-        createTransaction(item, 'servicio', item.price);
-      } else alert('Regístrate primero');
-    });
-  });
-  document.querySelectorAll('.share-savings').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const title = btn.getAttribute('data-title');
-      const price = btn.getAttribute('data-price');
-      const text = `🎖️ ¡Mirá este servicio en TácticoMarket! *${title}* por solo $${parseInt(price).toLocaleString()} ARS. ¡Ahorro seguro! https://tacticomarket2026.netlify.app/ref/${currentUser?.refCode || 'invitado'}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-    });
-  });
-}
-
-// ======================== GRUPOS ========================
-function renderGrupos() {
-  const container = document.getElementById('gruposContainer');
-  if (!container) return;
-  if (gruposActivos.length === 0) {
-    container.innerHTML = '<div style="padding:12px;text-align:center">No hay compras grupales activas. ¡Iniciá una!</div>';
-    return;
-  }
-  container.innerHTML = gruposActivos.map(g => `
-    <div style="background:var(--g2);padding:12px;border-radius:12px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:32px">${g.imagen}</div>
-        <div style="flex:1">
-          <div><strong>${g.producto}</strong></div>
-          <div>Precio normal: $${g.precioUnitario.toLocaleString()}</div>
-          <div>Precio grupal (${Math.round(g.descuento*100)}% off): $${Math.round(g.precioUnitario * (1 - g.descuento)).toLocaleString()}</div>
-          <div>Participantes: ${g.participantes} / ${g.meta}</div>
-          <div style="background:var(--n);border-radius:30px;height:6px;margin:6px 0"><div style="width:${(g.participantes/g.meta)*100}%;height:100%;background:var(--v);border-radius:30px"></div></div>
-        </div>
-        <button class="join-group" data-id="${g.id}" style="background:var(--gold);border:none;padding:6px 12px;border-radius:30px;cursor:pointer">Sumarme</button>
-      </div>
-    </div>
-  `).join('');
-  document.querySelectorAll('.join-group').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(btn.getAttribute('data-id'));
-      const grupo = gruposActivos.find(g => g.id === id);
-      if (grupo) {
-        grupo.participantes++;
-        localStorage.setItem('gruposActivos', JSON.stringify(gruposActivos));
-        renderGrupos();
-        alert(`✅ Te sumaste al grupo para ${grupo.producto}. Cuando se completen ${grupo.meta} participantes, todos comprarán al precio grupal.`);
-        addPoints(30, true);
-      }
-    });
-  });
-}
-
-// ======================== ADMIN PANEL ========================
-function showAdminPanel() {
-  if(!currentUser?.isAdmin) return;
-  let users = JSON.parse(localStorage.getItem('allUsers')) || [];
-  document.getElementById('adminUsersList').innerHTML = users.map((u,i)=>`<div>${u.grade} - ${u.points}pts <button class="delUser" data-idx="${i}" style="background:var(--r);border:none;color:white;padding:2px 6px;border-radius:20px;cursor:pointer">Eliminar</button></div>`).join('');
-  document.getElementById('adminEscrowList').innerHTML = escrowTransactions.map(tx => `<div>${tx.tipo} - $${tx.monto} - ${tx.estado} <button class="selectEscrow" data-id="${tx.id}" style="background:var(--gold);border:none;padding:2px 8px;border-radius:20px;cursor:pointer">Seleccionar</button></div>`).join('');
-  document.getElementById('adminModal').classList.add('open');
-  document.querySelectorAll('.delUser').forEach(btn => btn.addEventListener('click', (e) => { users.splice(parseInt(btn.getAttribute('data-idx')),1); localStorage.setItem('allUsers',JSON.stringify(users)); showAdminPanel(); }));
-  document.querySelectorAll('.selectEscrow').forEach(btn => btn.addEventListener('click', (e) => { let id = parseInt(btn.getAttribute('data-id')); window.selectedEscrowId = id; }));
-}
-
-// ======================== REGISTRO ========================
-let currentForce = 'EA', currentLegajo = '', lastCode = null, selectedGrade = '', selectedForceLabel = '';
-function initRegister() {
-  const forceDiv = document.getElementById('forceButtons');
-  forceDiv.innerHTML = `<button class="force-btn active" data-force="EA">🪖 Ejército</button><button class="force-btn" data-force="AR">⚓ Armada</button><button class="force-btn" data-force="FA">✈️ FAA</button><button class="force-btn" data-force="CV">👔 Civil</button>`;
-  document.querySelectorAll('.force-btn').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.force-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active'); currentForce = btn.getAttribute('data-force');
-    let prefix = currentForce === 'EA' ? 'EA-' : currentForce === 'AR' ? 'AR-' : currentForce === 'FA' ? 'FA-' : 'CV-';
-    document.getElementById('legajoPrefix').innerText = prefix;
-  }));
-  document.getElementById('sendCodeBtn').addEventListener('click', () => {
-    const legajoNum = document.getElementById('legajoInput').value.trim();
-    if (!legajoNum || legajoNum.length < 4) { document.getElementById('legajoError').innerText = 'Legajo inválido'; document.getElementById('legajoError').style.display = 'block'; return; }
-    const full = document.getElementById('legajoPrefix').innerText + legajoNum;
-    if (legajoNum === ADMIN_SECRET) {
-      currentLegajo = full; lastCode = Math.floor(100000 + Math.random() * 900000).toString();
-      document.getElementById('smsInfo').innerHTML = `📱 Código: ${lastCode}`;
-      document.getElementById('stepLegajo').style.display = 'none'; document.getElementById('stepCode').style.display = 'block'; document.getElementById('stepGrade').style.display = 'none';
-      return;
-    }
-    if (!validLegajos.has(full)) { document.getElementById('legajoError').innerText = 'Legajo no encontrado'; document.getElementById('legajoError').style.display = 'block'; return; }
-    currentLegajo = full; lastCode = Math.floor(100000 + Math.random() * 900000).toString();
-    document.getElementById('smsInfo').innerHTML = `📱 Código: ${lastCode}`;
-    document.getElementById('stepLegajo').style.display = 'none'; document.getElementById('stepCode').style.display = 'block'; document.getElementById('stepGrade').style.display = 'none';
-  });
-  document.getElementById('verifyCodeBtn').addEventListener('click', () => {
-    const code = document.getElementById('codeInput').value.trim();
-    if (code !== lastCode) { document.getElementById('codeError').innerText = 'Código incorrecto'; document.getElementById('codeError').style.display = 'block'; return; }
-    document.getElementById('stepLegajo').style.display = 'none'; document.getElementById('stepCode').style.display = 'none'; document.getElementById('stepGrade').style.display = 'block';
-    const gradeSet = gradesData[currentForce] || gradesData.EA;
-    let html = `<div><strong>${gradeSet.label}</strong></div>`;
-    [...gradeSet.items, ...gradesData.ANON.items].forEach(g => { html += `<button type="button" class="grade-option" data-grade="${g}">${g.includes('🙈') ? '🙈 ' : '🎖️ '}${g}</button>`; });
-    document.getElementById('gradesContainer').innerHTML = html;
-    document.querySelectorAll('.grade-option').forEach(btn => btn.addEventListener('click', () => {
-      document.querySelectorAll('.grade-option').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected'); selectedGrade = btn.getAttribute('data-grade'); selectedForceLabel = gradeSet.label;
-      document.getElementById('confirmGradeBtn').disabled = false;
-    }));
-  });
-  document.getElementById('skipGradeBtn').addEventListener('click', () => { selectedGrade = 'Prefiero no decirlo 🙈'; selectedForceLabel = gradesData[currentForce]?.label || 'Militar'; finalizeRegistration(); });
-  document.getElementById('confirmGradeBtn').addEventListener('click', () => { if (selectedGrade) finalizeRegistration(); });
-  document.getElementById('resendCodeBtn').addEventListener('click', () => { if (currentLegajo) { lastCode = Math.floor(100000 + Math.random() * 900000).toString(); document.getElementById('smsInfo').innerHTML = `📱 Nuevo código: ${lastCode}`; } });
-  document.getElementById('backToLegajo').addEventListener('click', () => { document.getElementById('stepLegajo').style.display = 'block'; document.getElementById('stepCode').style.display = 'none'; document.getElementById('stepGrade').style.display = 'none'; });
-}
-function finalizeRegistration() {
-  const legajoNum = document.getElementById('legajoInput').value;
-  const isAdmin = (legajoNum === ADMIN_SECRET);
-  const newRefCode = 'TACTICO-' + Math.random().toString(36).substring(2,8).toUpperCase();
-  const newUser = { grade: selectedGrade, force: selectedForceLabel, points: isAdmin ? 999999 : 500, refCode: newRefCode, isAdmin: isAdmin };
-  let allUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
-  allUsers.push(newUser); localStorage.setItem('allUsers', JSON.stringify(allUsers));
-  saveUser(newUser);
-  document.getElementById('registerModal').classList.remove('open');
-  if (isAdmin) showNotification('👑 Bienvenido, Administrador');
-  else showNotification(`✅ Bienvenido ${selectedGrade}`);
-  updateUI();
-}
-function updateUI() {
-  if(currentUser){
-    document.getElementById('sidebarGrade').innerText = currentUser.grade;
-    document.getElementById('pointsDisplay').innerHTML = `⚡ ${currentUser.points||0} pts`;
-    document.getElementById('registerBtnNav').innerHTML = '👤 MI PERFIL';
-    if(currentUser.refCode) document.getElementById('refCodeDisplay').innerText = currentUser.refCode;
-    document.getElementById('totalComisiones').innerHTML = `$${userComisiones}`;
-    document.getElementById('adminPanelBtn').style.display = currentUser.isAdmin ? 'block' : 'none';
-  } else {
-    document.getElementById('sidebarGrade').innerText = 'Invitado';
-    document.getElementById('pointsDisplay').innerHTML = '⚡ 0 pts';
-    document.getElementById('adminPanelBtn').style.display = 'none';
-  }
-  document.getElementById('llavesCount').innerHTML = llaves;
-  updateMissionsUI(); updateRankingUI(); updateSuccessStoriesUI(); updateTopReferidos(); updateDonationUI();
-  renderGrupos(); // para refrescar grupos
-}
-
-// ======================== EVENTOS INICIALES ========================
-document.getElementById('registerBtnNav').addEventListener('click', () => { if (!currentUser) document.getElementById('registerModal').classList.add('open'); else alert('Ya registrado'); });
-document.getElementById('closeRegModal').addEventListener('click', () => document.getElementById('registerModal').classList.remove('open'));
-document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('tacticoUser'); currentUser = null; location.reload(); });
-document.getElementById('abrirCajaBtn').addEventListener('click', abrirCaja);
-document.getElementById('copyRefBtn').addEventListener('click', () => { if (currentUser?.refCode) navigator.clipboard.writeText(currentUser.refCode); showNotification('Código copiado'); });
-document.getElementById('addStoryBtn').addEventListener('click', () => document.getElementById('storyModal').classList.add('open'));
-document.getElementById('closeStoryModal').addEventListener('click', () => document.getElementById('storyModal').classList.remove('open'));
-document.getElementById('submitStoryBtn').addEventListener('click', () => { addStory(document.getElementById('storyText').value); document.getElementById('storyModal').classList.remove('open'); document.getElementById('storyText').value = ''; });
-document.getElementById('exploreBtn').addEventListener('click', () => document.getElementById('listingsGrid').scrollIntoView({ behavior: 'smooth' }));
-document.getElementById('walletNav').addEventListener('click', () => alert(`💰 Billetera: $${userComisiones} · Puntos: ${currentUser?.points||0} · Llaves: ${llaves}`));
-document.getElementById('transparencyBtn').addEventListener('click', () => { updateDonationUI(); document.getElementById('transparencyModal').classList.add('open'); });
-document.getElementById('closeTransparencyModal').addEventListener('click', () => document.getElementById('transparencyModal').classList.remove('open'));
-document.getElementById('adminPanelBtn').addEventListener('click', showAdminPanel);
-document.getElementById('closeAdminModal').addEventListener('click', () => document.getElementById('adminModal').classList.remove('open'));
-document.getElementById('adminReleaseEscrowBtn')?.addEventListener('click', () => { if(window.selectedEscrowId) { let tx = escrowTransactions.find(t => t.id === window.selectedEscrowId); if(tx) { tx.estado = 'liberado'; localStorage.setItem('escrowTransactions', JSON.stringify(escrowTransactions)); showNotification('Pago liberado manualmente'); showAdminPanel(); } } });
-document.getElementById('adminClearAllBtn')?.addEventListener('click', () => { if(confirm('Borrar todos los datos?')) localStorage.clear(); location.reload(); });
-document.getElementById('crearGrupoBtn')?.addEventListener('click', () => {
-  const producto = prompt('¿Qué producto querés comprar en grupo?');
-  if (!producto) return;
-  const precio = parseFloat(prompt('¿Precio unitario normal? (ARS)'));
-  if (isNaN(precio)) return;
-  const meta = parseInt(prompt('¿Cuántas personas necesitamos?'));
-  if (isNaN(meta)) return;
-  const nuevoGrupo = { id: Date.now(), producto, precioUnitario: precio, meta, participantes: 1, descuento: 0.15, imagen: prompt('Emoji representativo') || '📦' };
-  gruposActivos.push(nuevoGrupo);
-  localStorage.setItem('gruposActivos', JSON.stringify(gruposActivos));
-  renderGrupos();
-  alert(`✅ Grupo creado. Compartilo con tus compañeros.`);
-});
-document.querySelectorAll('.donate-link').forEach(btn => btn.addEventListener('click', () => { let monto = parseInt(btn.getAttribute('data-monto')); totalDonations += monto; localStorage.setItem('totalDonations', totalDonations); updateDonationUI(); showNotification(`💚 Gracias por donar $${monto} (simulado)`); }));
-document.getElementById('chatFab').addEventListener('click', () => document.getElementById('chatWindow').classList.toggle('open'));
-document.getElementById('closeChat').addEventListener('click', () => document.getElementById('chatWindow').classList.remove('open'));
-document.getElementById('chatSend').addEventListener('click', () => { let inp = document.getElementById('chatInput'); if (inp.value.trim()) { document.getElementById('chatMessages').innerHTML += `<div style="background:rgba(143,180,58,0.15);padding:8px;border-radius:12px;margin-bottom:4px">Tú: ${inp.value}</div>`; inp.value = ''; completeMission('chat'); setTimeout(() => { document.getElementById('chatMessages').innerHTML += `<div style="background:rgba(143,180,58,0.1);padding:8px;border-radius:12px;margin-bottom:4px">🎖️ Soporte: Gracias.</div>`; }, 1000); } });
-document.getElementById('termsLink').addEventListener('click', (e) => { e.preventDefault(); alert('Términos: marketplace de confianza.'); });
-document.getElementById('privacyLink').addEventListener('click', (e) => { e.preventDefault(); alert('Privacidad: no almacenamos legajos reales.'); });
-
-// TABS
-document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('productosTab').style.display = btn.getAttribute('data-tab') === 'productos' ? 'block' : 'none';
-  document.getElementById('serviciosTab').style.display = btn.getAttribute('data-tab') === 'servicios' ? 'block' : 'none';
-}));
-
-// INICIO
-if (currentUser) checkDailyLogin();
-renderListingsConGanga();
-renderServiciosConGanga();
-renderGrupos();
-updateUI();
-initRegister();
-</script>
+        logoutBtn.onclick = () => {
+            localStorage.removeItem('tacticoUser');
+            showMessage('Sesión cerrada');
+            alert('Sesión cerrada');
+        };
+    </script>
 </body>
 </html>
