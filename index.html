@@ -127,6 +127,48 @@ body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflo
 </footer>
 
 <script>
+  // ======================== COMPRAS GRUPALES ========================
+let gruposActivos = JSON.parse(localStorage.getItem('gruposActivos')) || [
+  { id: 1, producto: 'Botas de combate talla 42', precioUnitario: 18000, meta: 10, participantes: 3, descuento: 0.15, imagen: '👢' },
+  { id: 2, producto: 'Mochila táctica 60L', precioUnitario: 15000, meta: 8, participantes: 4, descuento: 0.20, imagen: '🎒' }
+];
+
+function renderGrupos() {
+  const container = document.getElementById('gruposContainer');
+  if (!container) return;
+  if (gruposActivos.length === 0) {
+    container.innerHTML = '<div style="padding:12px;text-align:center">No hay compras grupales activas. ¡Iniciá una!</div>';
+    return;
+  }
+  container.innerHTML = gruposActivos.map(g => `
+    <div style="background:var(--g2);padding:12px;border-radius:12px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:32px">${g.imagen}</div>
+        <div style="flex:1">
+          <div><strong>${g.producto}</strong></div>
+          <div>Precio normal: $${g.precioUnitario.toLocaleString()}</div>
+          <div>Precio grupal (${Math.round(g.descuento*100)}% off): $${Math.round(g.precioUnitario * (1 - g.descuento)).toLocaleString()}</div>
+          <div>Participantes: ${g.participantes} / ${g.meta}</div>
+          <div style="background:var(--n);border-radius:30px;height:6px;margin:6px 0"><div style="width:${(g.participantes/g.meta)*100}%;height:100%;background:var(--v);border-radius:30px"></div></div>
+        </div>
+        <button class="join-group" data-id="${g.id}" style="background:var(--gold);border:none;padding:6px 12px;border-radius:30px;cursor:pointer">Sumarme</button>
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.join-group').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(btn.getAttribute('data-id'));
+      const grupo = gruposActivos.find(g => g.id === id);
+      if (grupo) {
+        grupo.participantes++;
+        localStorage.setItem('gruposActivos', JSON.stringify(gruposActivos));
+        renderGrupos();
+        alert(`✅ Te sumaste al grupo para ${grupo.producto}. Cuando se completen ${grupo.meta} participantes, todos podrán comprar al precio grupal.`);
+        addPoints(30, true); // recompensa por participar
+      }
+    });
+  });
+}
   // ======================== SISTEMA DE GANGA (precio -30% o más) ========================
 function calcularPrecioPromedioPorCategoria(tipo) {
   // tipo puede ser 'producto' o 'servicio'
