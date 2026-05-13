@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TácticoMarket — Marketplace Militar Argentino</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--v:#6b8c3a;--v2:#4e6a28;--v3:#8aaa48;--n:#0a0c08;--n2:#111409;--g1:#1a1f12;--g2:#212918;--a:#c9b99a;--a2:#e8d9c0;--a3:#f0ede8;--r:#c0392b;--r2:#e05a4a;--b:#1a73e8;--o:#d4780a;--gold:#c8a820;--cyan:#00c8d4}
+body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--n2)}
+::-webkit-scrollbar-thumb{background:rgba(143,180,58,0.3)}
+.btn-glow{background:var(--v);color:var(--n);padding:12px 28px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;border:none;cursor:pointer;clip-path:polygon(10px 0%,100% 0%,calc(100%-10px)100%,0%100%);transition:0.2s}
+.btn-glow:hover{background:var(--v3);transform:translateY(-2px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:800;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--g1);border:1px solid rgba(143,180,58,.2);width:100%;max-width:550px;max-height:90vh;overflow-y:auto;clip-path:polygon(14px 0%,100% 0%,calc(100%-14px)100%,0%100%);padding:24px}
+.form-input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(143,180,58,.12);color:var(--a3);padding:10px 14px;clip-path:polygon(4px 0%,100% 0%,calc(100%-4px)100%,0%100%);margin-top:4px}
+.listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
+.listing-card{background:var(--g1);border:1px solid rgba(143,180,58,.08);padding:16px;cursor:pointer;transition:0.2s;border-radius:8px}
+.listing-card:hover{transform:translateY(-4px);border-color:rgba(143,180,58,.4)}
+.listing-thumb{height:140px;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:52px;border-radius:8px;margin-bottom:12px}
+.listing-price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--v)}
+.chat-fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:var(--v);border:none;cursor:pointer;font-size:24px;clip-path:polygon(8px 0%,100% 0%,calc(100%-8px)100%,0%100%);z-index:600;box-shadow:0 4px 20px rgba(143,180,58,.4)}
+.chat-window{position:fixed;bottom:90px;right:24px;width:350px;height:500px;background:var(--g1);border:1px solid rgba(143,180,58,.2);z-index:599;display:flex;flex-direction:column;transform:translateY(20px) scale(0.97);opacity:0;pointer-events:none;transition:0.25s;border-radius:12px}
+.chat-window.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+.force-btn{background:rgba(143,180,58,0.1);padding:10px 16px;border:1px solid var(--v);cursor:pointer;border-radius:8px;transition:0.2s}
+.force-btn.active{background:rgba(143,180,58,0.4)}
+.grade-option{display:block;width:100%;text-align:left;padding:12px;margin-bottom:8px;background:rgba(143,180,58,0.05);border:1px solid rgba(143,180,58,0.2);cursor:pointer;border-radius:8px}
+.pending-badge{background:var(--o);color:var(--n);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold}
+.verified-badge{background:#4caf50;color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold}
+.admin-btn{background:var(--r);color:white;border:none;padding:6px 12px;border-radius:20px;cursor:pointer;font-size:11px}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav style="position:sticky;top:0;background:rgba(10,12,8,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(143,180,58,0.12);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto;z-index:100">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--v)">TÁCTICO<span style="color:var(--a)">MKT</span></div>
+  <div style="display:flex;gap:16px;align-items:center">
+    <div id="pointsDisplay" style="background:rgba(143,180,58,0.15);padding:6px 14px;border-radius:20px;font-family:monospace">⚡ 0 pts</div>
+    <div id="verifyBadge" style="display:none"></div>
+    <button id="registerBtnNav" style="background:rgba(143,180,58,0.1);border:1px solid rgba(143,180,58,0.3);color:var(--a);padding:8px 20px;border-radius:30px;cursor:pointer">🎖 REGISTRARSE</button>
+    <button id="adminPanelBtn" style="background:var(--r);border:none;padding:8px 16px;border-radius:30px;cursor:pointer;font-size:12px;color:white;display:none">🔒 ADMIN</button>
+    <button id="walletNav" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);padding:8px 16px;border-radius:30px;cursor:pointer">💰 Billetera</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="max-width:1400px;margin:30px auto 0;padding:40px;background:linear-gradient(135deg,#0d1609,#1a2810);border:1px solid rgba(143,180,58,0.2);border-radius:20px;position:relative">
+  <div id="flashEventBanner" style="background:linear-gradient(90deg,var(--r),#ff6b6b);color:white;padding:8px 20px;position:absolute;top:20px;right:20px;border-radius:30px;font-size:12px;display:none">⚡ EVENTO ACTIVO: DOBLE XP</div>
+  <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,110px);line-height:0.9">COMPRÁ.<br><span style="color:var(--v)">VENDÉ.</span><span style="opacity:0.4"> AHORRÁ MÁS</span></h1>
+  <p style="margin-top:16px;opacity:0.7">El marketplace exclusivo para militares argentinos. Verificación en 24-48hs.</p>
+  <button class="btn-glow" style="width:fit-content;margin-top:24px" id="exploreBtn">▸ EXPLORAR</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div style="max-width:1400px;margin:30px auto;padding:0 24px;display:grid;grid-template-columns:1fr 320px;gap:30px">
+  <div>
+    <!-- MISIONES DIARIAS -->
+    <div style="background:var(--g1);padding:20px;border-radius:16px;margin-bottom:24px">
+      <h2 style="font-family:'Bebas Neue';font-size:24px;display:flex;justify-content:space-between">📋 Misiones diarias<span id="streakCounter" style="font-size:14px">🔥 Racha: 0 días</span></h2>
+      <div id="missionsContainer" style="margin-top:16px"></div>
+    </div>
+
+    <!-- PUBLICACIONES -->
+    <h2 style="font-family:'Bebas Neue';font-size:28px">🔥 Publicaciones</h2>
+    <div class="listings-grid" id="listingsGrid"></div>
+
+    <!-- CAJAS SORPRESA -->
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px;margin-top:24px;border-radius:16px;text-align:center">
+      <h3>🎁 Caja de Botín</h3>
+      <p>Tienes <strong id="llavesCount" style="color:var(--gold);font-size:24px">0</strong> llaves</p>
+      <button id="abrirCajaBtn" style="background:linear-gradient(90deg,var(--gold),#ffd700);border:none;padding:12px 32px;border-radius:40px;cursor:pointer;font-weight:bold">🎁 ABRIR CAJA</button>
+      <div id="ultimoPremio" style="margin-top:12px;font-size:13px"></div>
+    </div>
+
+    <!-- RANKING -->
+    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
+      <h3>🏆 Ranking de unidades</h3>
+      <div id="rankingsContainer" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div style="background:var(--g1);padding:20px;border-radius:16px;margin-bottom:24px;text-align:center">
+      <div style="font-size:64px">🎖️</div>
+      <div id="sidebarGrade" style="font-family:'Bebas Neue';font-size:22px">Invitado</div>
+      <div id="sidebarForce" style="font-size:12px;opacity:0.6">Regístrate</div>
+      <div id="verificationStatusMsg" style="margin-top:8px"></div>
+      <hr style="margin:16px 0">
+      <div style="text-align:left">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>🔗 Código referido:</strong>
+          <span id="refCodeDisplay" style="font-family:monospace">---</span>
+          <button id="copyRefBtn" style="background:none;border:1px solid var(--v);padding:4px 12px;border-radius:20px;cursor:pointer">Copiar</button>
+        </div>
+        <div style="margin-top:8px"><strong>💰 Comisiones:</strong> <span id="totalComisiones">$0</span></div>
+      </div>
+    </div>
+
+    <div id="unverifiedWarning" style="background:rgba(192,57,43,0.2);border:1px solid var(--r);padding:16px;border-radius:16px;margin-bottom:24px;text-align:center;display:none">
+      <div style="font-size:28px">⏳</div>
+      <div style="font-weight:bold;margin:8px 0">Cuenta pendiente de verificación</div>
+      <div style="font-size:12px">Tu legajo está siendo verificado. En 24-48hs podrás publicar y ver contactos.</div>
+    </div>
+
+    <div style="background:var(--g1);padding:20px;border-radius:16px;margin-bottom:24px">
+      <h3>🌟 Top Reclutadores</h3>
+      <div id="topReferidosList"></div>
+    </div>
+
+    <div style="background:var(--g1);padding:20px;border-radius:16px">
+      <h3>📖 Historias de éxito</h3>
+      <div id="successStoriesList" style="max-height:200px;overflow-y:auto;margin-bottom:12px"></div>
+      <button id="addStoryBtn" style="width:100%;background:var(--v);border:none;padding:10px;border-radius:30px;cursor:pointer">✍️ Compartir historia</button>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#1a2810,#0d1609);padding:16px;border-radius:16px;margin-top:16px;text-align:center">
+      <div style="font-size:28px">💚</div>
+      <div><strong>Apoyá TácticoMarket</strong></div>
+      <div style="font-size:12px">Donación voluntaria</div>
+      <div style="background:var(--n);border-radius:30px;height:8px;margin:12px 0">
+        <div id="donationFill" style="width:0%;height:100%;background:linear-gradient(90deg,var(--v),var(--v3));border-radius:30px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px">
+        <span>Recaudado: <strong id="donationRaised">$0</strong></span>
+        <span>Meta: $500.000</span>
+      </div>
+      <button id="donateBtn" style="margin-top:12px;background:var(--gold);border:none;padding:8px 20px;border-radius:30px;cursor:pointer">💰 Donar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<button class="chat-fab" id="chatFab">💬</button>
+<div class="chat-window" id="chatWindow">
+  <div style="padding:16px;border-bottom:1px solid rgba(143,180,58,0.1);display:flex;justify-content:space-between">
+    <span>🗣️ Chat</span><button id="closeChat" style="background:none;border:none;color:var(--a);cursor:pointer">✕</button>
+  </div>
+  <div style="flex:1;padding:16px;overflow-y:auto" id="chatMessages"></div>
+  <div style="padding:16px;border-top:1px solid rgba(143,180,58,0.1);display:flex;gap:10px">
+    <input id="chatInput" placeholder="Escribe..." style="flex:1;background:rgba(255,255,255,0.05);border:none;padding:12px;border-radius:30px;color:white">
+    <button id="chatSend" style="background:var(--v);border:none;padding:10px 18px;border-radius:30px;cursor:pointer">Enviar</button>
+  </div>
+</div>
+
+<!-- MODALES (Registro, Historia, Donación, Admin) -->
+<div class="modal-overlay" id="registerModal"><div class="modal"><div style="display:flex;justify-content:flex-end"><button id="closeRegModal" style="background:none;border:none;font-size:24px;cursor:pointer">✕</button></div>
+<div id="regStepContainer">
+  <div id="stepLegajo"><h2>Verificación militar</h2><p>Ingresá tu legajo</p>
+    <div><label>FUERZA</label><div id="forceButtons" style="display:flex;gap:10px;margin:8px 0"></div></div>
+    <div><label>LEGAJO</label><div style="display:flex"><span id="legajoPrefix" style="background:var(--g2);padding:10px;border:1px solid rgba(143,180,58,0.2);border-radius:8px 0 0 8px">EA-</span><input type="text" id="legajoInput" class="form-input" style="border-radius:0 8px 8px 0;margin-top:0"></div></div>
+    <div id="legajoError" style="color:var(--r2);display:none"></div>
+    <button id="sendCodeBtn" class="btn-glow" style="width:100%;margin-top:16px">📱 Enviar código</button>
+    <p style="font-size:10px;text-align:center;margin-top:16px">✅ Verificaremos tu legajo en 24-48hs. Mientras, podrás ver publicaciones.</p></div>
+  <div id="stepCode" style="display:none"><h2>Código SMS</h2><p id="smsInfo"></p><input type="text" id="codeInput" class="form-input" placeholder="000000"><div id="codeError" style="color:var(--r2);display:none"></div>
+    <button id="verifyCodeBtn" class="btn-glow" style="width:100%;margin-top:16px">✅ Verificar</button>
+    <button id="resendCodeBtn" style="margin-top:12px;background:none;border:1px solid var(--v);padding:10px;border-radius:30px;width:100%;cursor:pointer">Reenviar</button>
+    <button id="backToLegajo" style="margin-top:12px;background:none;border:none;cursor:pointer">← Volver</button></div>
+  <div id="stepGrade" style="display:none"><h2>Completá perfil</h2><div id="gradesContainer" style="max-height:300px;overflow-y:auto;margin-bottom:16px"></div>
+    <div style="display:flex;gap:12px"><button id="skipGradeBtn" style="flex:1;background:rgba(143,180,58,0.1);border:1px solid var(--v);padding:12px;border-radius:30px;cursor:pointer">🙈 Prefiero no decirlo</button><button id="confirmGradeBtn" class="btn-glow" style="flex:1" disabled>✅ Confirmar</button></div></div>
+</div></div></div>
+
+<div class="modal-overlay" id="storyModal"><div class="modal"><h3>Compartí tu historia</h3><textarea id="storyText" rows="4" class="form-input" style="margin:16px 0"></textarea><button id="submitStoryBtn" class="btn-glow" style="width:100%">Publicar</button><button id="closeStoryModal" style="width:100%;margin-top:12px;background:none;border:1px solid rgba(143,180,58,0.3);padding:10px;border-radius:30px;cursor:pointer">Cerrar</button></div></div>
+
+<div class="modal-overlay" id="donateModal"><div class="modal"><h3>💚 Apoyá TácticoMarket</h3><p style="margin:16px 0">Tu donación mantiene la plataforma gratuita.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    <button class="donate-amount" data-amount="1000" style="padding:12px;background:rgba(143,180,58,0.1);border:1px solid var(--v);border-radius:12px;cursor:pointer">$1.000</button>
+    <button class="donate-amount" data-amount="2500" style="padding:12px;background:rgba(143,180,58,0.1);border:1px solid var(--v);border-radius:12px;cursor:pointer">$2.500</button>
+    <button class="donate-amount" data-amount="5000" style="padding:12px;background:rgba(143,180,58,0.1);border:1px solid var(--v);border-radius:12px;cursor:pointer">$5.000</button>
+  </div>
+  <div><input type="number" id="customDonation" class="form-input" placeholder="Otro monto"></div>
+  <button id="processDonationBtn" class="btn-glow" style="width:100%;margin-top:16px">💰 Donar</button>
+  <button id="closeDonateModal" style="width:100%;margin-top:12px;background:none;border:1px solid rgba(143,180,58,0.3);padding:10px;border-radius:30px;cursor:pointer">Cerrar</button></div></div>
+
+<!-- MODAL ADMIN (Panel de verificación secreto) -->
+<div class="modal-overlay" id="adminModal"><div class="modal"><h2>🔒 Panel de Administración</h2><p style="margin:12px 0">Usuarios pendientes de verificación:</p>
+  <div id="pendingUsersList" style="max-height:300px;overflow-y:auto;margin-bottom:16px"></div>
+  <button id="closeAdminModal" style="width:100%;background:var(--v);border:none;padding:12px;border-radius:30px;cursor:pointer">Cerrar</button></div></div>
+
+<script>
+// ======================== ESTADO GLOBAL ========================
+let currentUser = JSON.parse(localStorage.getItem('tacticoUser')) || null;
+let pendingUsers = JSON.parse(localStorage.getItem('pendingUsers')) || [];
+let missions = JSON.parse(localStorage.getItem('missions')) || [
+  { id: 'login', title: '✅ Iniciar sesión', done: false, reward: 20, progress: 0, target: 1 },
+  { id: 'publish', title: '📦 Publicar artículo', done: false, reward: 50, progress: 0, target: 1 },
+  { id: 'chat', title: '💬 Responder 3 mensajes', done: false, reward: 30, progress: 0, target: 3 },
+  { id: 'refer', title: '👥 Invitar compañero', done: false, reward: 100, progress: 0, target: 1 },
+];
+let streak = parseInt(localStorage.getItem('streak')) || 0;
+let lastLoginDate = localStorage.getItem('lastLoginDate') || '';
+let llaves = parseInt(localStorage.getItem('llaves')) || 0;
+let referidosRegistrados = JSON.parse(localStorage.getItem('referidosList')) || [];
+let userComisiones = parseInt(localStorage.getItem('userComisiones')) || 0;
+let rankings = JSON.parse(localStorage.getItem('unitRanking')) || { "Córdoba": 120, "Buenos Aires": 95, "Mendoza": 78, "Salta": 52, "Neuquén": 45 };
+let successStories = JSON.parse(localStorage.getItem('successStories')) || [];
+let totalDonations = parseInt(localStorage.getItem('totalDonations')) || 12500;
+let flashEvent = JSON.parse(localStorage.getItem('flashEvent')) || { active: false, endTime: 0 };
+
+// Grados
+const gradesData = {
+  EA: { label: '🪖 Ejército', items: ['Soldado Voluntario 2da','Soldado Voluntario 1ra','Cabo','Cabo Primero','Sargento','Sargento Primero','Suboficial','Teniente','Capitán','Coronel'] },
+  AR: { label: '⚓ Armada', items: ['Marinero','Cabo Segundo','Cabo Primero','Suboficial','Teniente de Corbeta','Capitán de Corbeta'] },
+  FA: { label: '✈️ Fuerza Aérea', items: ['Soldado Voluntario','Cabo','Suboficial','Alférez','Teniente','Capitán','Mayor','Brigadier'] },
+  CV: { label: '👔 Personal Civil', items: ['Personal Civil Contratado','Personal Civil Planta','Técnico'] },
+  ANON: { label: '🙈 Anónimo', items: ['Prefiero no decirlo'] }
+};
+
+// ======================== FUNCIONES PRINCIPALES ========================
+function saveUser(user) { localStorage.setItem('tacticoUser', JSON.stringify(user)); currentUser = user; updateUI(); }
+function addPoints(amount, withFlash = false) { if(currentUser){ currentUser.points = (currentUser.points||0) + amount; saveUser(currentUser); } }
+function completeMission(missionId) { let m = missions.find(m=>m.id===missionId); if(m && !m.done){ m.progress++; if(m.progress>=m.target){ m.done=true; addPoints(m.reward,true); llaves++; localStorage.setItem('llaves',llaves); } localStorage.setItem('missions',JSON.stringify(missions)); updateMissionsUI(); } }
+
+function updateUI(){
+  if(currentUser){
+    document.getElementById('sidebarGrade').innerText = currentUser.grade;
+    document.getElementById('sidebarForce').innerText = currentUser.force || 'Militar';
+    document.getElementById('pointsDisplay').innerHTML = `⚡ ${currentUser.points||0} pts`;
+    document.getElementById('refCodeDisplay').innerText = currentUser.refCode;
+    document.getElementById('totalComisiones').innerHTML = `$${userComisiones}`;
+    document.getElementById('llavesCount').innerHTML = llaves;
+    if(currentUser.isVerified){
+      document.getElementById('verificationStatusMsg').innerHTML = '<span class="verified-badge">✅ CUENTA VERIFICADA</span>';
+      document.getElementById('unverifiedWarning').style.display = 'none';
+    } else {
+      document.getElementById('verificationStatusMsg').innerHTML = '<span class="pending-badge">⏳ PENDIENTE DE VERIFICACIÓN</span>';
+      document.getElementById('unverifiedWarning').style.display = 'block';
+    }
+    if(currentUser.isAdmin) document.getElementById('adminPanelBtn').style.display = 'block';
+  } else {
+    document.getElementById('sidebarGrade').innerText = 'Invitado';
+    document.getElementById('pointsDisplay').innerHTML = '⚡ 0 pts';
+    document.getElementById('refCodeDisplay').innerText = '---';
+    document.getElementById('verificationStatusMsg').innerHTML = '';
+    document.getElementById('unverifiedWarning').style.display = 'none';
+    document.getElementById('adminPanelBtn').style.display = 'none';
+  }
+  updateMissionsUI(); updateRankingUI(); updateSuccessStoriesUI(); updateTopReferidos(); updateDonationUI();
+}
+
+function updateMissionsUI(){
+  document.getElementById('missionsContainer').innerHTML = missions.map(m=>`
+    <div style="background:var(--g2);padding:12px;border-radius:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between"><strong>${m.title}</strong><span>${m.done?'✅':`+${m.reward} pts`}</span></div>
+      <div style="font-size:12px">Progreso: ${m.progress}/${m.target}</div>
+      ${!m.done && currentUser?.isVerified ? `<button class="mock-mission" data-id="${m.id}" style="background:var(--v);border:none;padding:4px 12px;border-radius:20px;margin-top:6px;cursor:pointer">Simular</button>` : ''}
+    </div>
+  `).join('');
+  document.querySelectorAll('.mock-mission').forEach(btn=>btn.addEventListener('click',(e)=>{ completeMission(btn.getAttribute('data-id')); updateUI(); }));
+}
+
+function checkDailyLogin(){
+  const today = new Date().toDateString();
+  if(lastLoginDate !== today && currentUser){
+    if(lastLoginDate && (new Date()-new Date(lastLoginDate))/86400000 <=1) streak++; else streak=1;
+    localStorage.setItem('streak',streak); localStorage.setItem('lastLoginDate',today);
+    document.getElementById('streakCounter').innerHTML = `🔥 Racha: ${streak} días`;
+    addPoints(streak*10,true); completeMission('login');
+  }
+  document.getElementById('streakCounter').innerHTML = `🔥 Racha: ${streak} días`;
+}
+
+function updateTopReferidos(){
+  let refCount = {}; referidosRegistrados.forEach(r=>{ refCount[r.referrerCode] = (refCount[r.referrerCode]||0)+1; });
+  let sorted = Object.entries(refCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('topReferidosList').innerHTML = sorted.map(([code,count])=>`<div style="display:flex;justify-content:space-between;padding:6px 0"><span>${code}</span><span style="color:var(--gold)">${count} ref.</span></div>`).join('') || '<div style="padding:8px;text-align:center;opacity:0.5">Sé el primero</div>';
+}
+
+function updateRankingUI(){
+  let sorted = Object.entries(rankings).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('rankingsContainer').innerHTML = sorted.map(([unit,points])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>📍 ${unit}</span><span style="color:var(--gold)">${points} pts</span></div>`).join('');
+}
+
+function updateDonationUI(){
+  let goal=500000;
+  document.getElementById('donationRaised').innerHTML = `$${totalDonations.toLocaleString()}`;
+  document.getElementById('donationFill').style.width = `${Math.min((totalDonations/goal)*100,100)}%`;
+}
+
+function updateSuccessStoriesUI(){
+  let container = document.getElementById('successStoriesList');
+  container.innerHTML = successStories.slice(0,5).map((s,i)=>`
+    <div style="border-bottom:1px solid rgba(255,255,255,0.1);padding:8px 0">
+      <div><strong>${s.author}</strong> · ${s.date}</div>
+      <div style="font-size:12px">${s.text.substring(0,80)}${s.text.length>80?'...':''}</div>
+      <button class="voteStory" data-idx="${i}" style="background:none;border:none;color:var(--gold);cursor:pointer">👍 ${s.votes}</button>
+    </div>
+  `).join('') || '<div style="padding:16px;text-align:center;opacity:0.5">Compartí tu historia</div>';
+  document.querySelectorAll('.voteStory').forEach(btn=>btn.addEventListener('click',()=>{ successStories[btn.getAttribute('data-idx')].votes++; localStorage.setItem('successStories',JSON.stringify(successStories)); updateSuccessStoriesUI(); }));
+}
+
+function addStory(text){ if(text.trim()){ successStories.unshift({ text, votes:0, date:new Date().toLocaleDateString(), author:currentUser?.grade||'Anónimo' }); if(successStories.length>20) successStories.pop(); localStorage.setItem('successStories',JSON.stringify(successStories)); updateSuccessStoriesUI(); } }
+
+function abrirCaja(){
+  if(llaves<=0){ alert('No tenés llaves. Completá misiones.'); return; }
+  llaves--; localStorage.setItem('llaves',llaves); updateUI();
+  let premios = [{nombre:'$500 ARS',tipo:'money',valor:500},{nombre:'100 puntos XP',tipo:'xp',valor:100},{nombre:'Cupón destacado',tipo:'feature'}];
+  let premio = premios[Math.floor(Math.random()*premios.length)];
+  if(premio.tipo==='money'){ userComisiones+=premio.valor; localStorage.setItem('userComisiones',userComisiones); updateUI(); alert(`🎉 Ganaste ${premio.nombre}!`); }
+  if(premio.tipo==='xp') addPoints(premio.valor,false);
+  document.getElementById('ultimoPremio').innerHTML = `🎉 ¡${premio.nombre}!`;
+  setTimeout(()=>document.getElementById('ultimoPremio').innerHTML='',3000);
+}
+
+function loadListings(){
+  let items = [
+    { id:1, title:'Botas combate 42', price:18000, emoji:'👢', loc:'Córdoba', seller:'Sgt. Pérez', sellerPhone:'+5493511234567' },
+    { id:2, title:'Samsung A53', price:85000, emoji:'📱', loc:'Mendoza', seller:'Cap. Rodríguez', sellerPhone:'+5492619876543' },
+    { id:3, title:'Mochila táctica', price:15000, emoji:'🎒', loc:'Salta', seller:'Tte. Gómez', sellerPhone:'+5493871234567' },
+  ];
+  document.getElementById('listingsGrid').innerHTML = items.map(it=>`
+    <div class="listing-card">
+      <div class="listing-thumb">${it.emoji}</div>
+      <div style="font-weight:bold">${it.title}</div>
+      <div class="listing-price">$${it.price.toLocaleString()}</div>
+      <div style="font-size:12px;opacity:0.6">📍 ${it.loc} · 👤 ${it.seller}</div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="buy-btn" data-price="${it.price}" style="flex:1;background:var(--v);border:none;padding:8px;border-radius:30px;cursor:pointer">Comprar</button>
+        ${currentUser?.isVerified ? `<button class="whatsapp-btn" data-phone="${it.sellerPhone}" style="background:#25D366;border:none;padding:8px;border-radius:30px;cursor:pointer">📲 WhatsApp</button>` : '<button disabled style="flex:1;background:gray;border:none;padding:8px;border-radius:30px;opacity:0.5" title="Verifica tu cuenta para ver el contacto">🔒 Contacto bloqueado</button>'}
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.buy-btn').forEach(btn=>btn.addEventListener('click',()=>{ alert('Compra simulada. +50 XP'); addPoints(50,true); completeMission('publish'); }));
+  document.querySelectorAll('.whatsapp-btn')?.forEach(btn=>btn.addEventListener('click',()=>{ window.open(`https://wa.me/${btn.getAttribute('data-phone')}`,'_blank'); }));
+}
+
+// ======================== REGISTRO CON VERIFICACIÓN PENDIENTE ========================
+let currentForce='EA', currentLegajo='', lastCode=null, selectedGrade='', selectedForceLabel='';
+
+function initRegister(){
+  document.getElementById('forceButtons').innerHTML = `<button class="force-btn active" data-force="EA">🪖 Ejército</button><button class="force-btn" data-force="AR">⚓ Armada</button><button class="force-btn" data-force="FA">✈️ Fuerza Aérea</button><button class="force-btn" data-force="CV">👔 Personal Civil</button>`;
+  document.querySelectorAll('.force-btn').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.force-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentForce=btn.getAttribute('data-force'); let p=currentForce==='EA'?'EA-':currentForce==='AR'?'AR-':currentForce==='FA'?'FA-':'CV-'; document.getElementById('legajoPrefix').innerText=p; }));
+  document.getElementById('sendCodeBtn').addEventListener('click',()=>{
+    let legajoNum = document.getElementById('legajoInput').value.trim();
+    if(!legajoNum || legajoNum.length<4){ document.getElementById('legajoError').innerText='Legajo inválido'; document.getElementById('legajoError').style.display='block'; return; }
+    currentLegajo = document.getElementById('legajoPrefix').innerText + legajoNum;
+    lastCode = Math.floor(100000+Math.random()*900000).toString();
+    document.getElementById('smsInfo').innerHTML = `📱 Código: <strong>${lastCode}</strong> (simulado)`;
+    document.getElementById('stepLegajo').style.display='none'; document.getElementById('stepCode').style.display='block';
+  });
+  document.getElementById('verifyCodeBtn').addEventListener('click',()=>{
+    let code = document.getElementById('codeInput').value.trim();
+    if(code !== lastCode){ document.getElementById('codeError').innerText='Código incorrecto'; document.getElementById('codeError').style.display='block'; return; }
+    document.getElementById('stepLegajo').style.display='none'; document.getElementById('stepCode').style.display='none'; document.getElementById('stepGrade').style.display='block';
+    let gradeSet = gradesData[currentForce] || gradesData.EA;
+    let html = `<div><strong>${gradeSet.label}</strong></div>`;
+    [...gradeSet.items, ...gradesData.ANON.items].forEach(g=>{ html += `<button class="grade-option" data-grade="${g}">${g.includes('🙈')?'🙈 ':'🎖️ '}${g}</button>`; });
+    document.getElementById('gradesContainer').innerHTML = html;
+    document.querySelectorAll('.grade-option').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.grade-option').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); selectedGrade=btn.getAttribute('data-grade'); selectedForceLabel=gradeSet.label; document.getElementById('confirmGradeBtn').disabled=false; }));
+  });
+  document.getElementById('skipGradeBtn').addEventListener('click',()=>{ selectedGrade='Prefiero no decirlo'; selectedForceLabel=gradesData[currentForce]?.label||'Militar'; finalizeRegistration(); });
+  document.getElementById('confirmGradeBtn').addEventListener('click',()=>{ if(selectedGrade) finalizeRegistration(); });
+  document.getElementById('resendCodeBtn').addEventListener('click',()=>{ if(currentLegajo){ lastCode=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('smsInfo').innerHTML=`📱 Nuevo código: ${lastCode}`; } });
+  document.getElementById('backToLegajo').addEventListener('click',()=>{ document.getElementById('stepLegajo').style.display='block'; document.getElementById('stepCode').style.display='none'; });
+}
+
+function finalizeRegistration(){
+  let refCode = 'TACTICO-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  let newUser = { grade: selectedGrade, force: selectedForceLabel, points: 500, refCode: refCode, isVerified: false, isAdmin: false, legajo: currentLegajo, registeredAt: Date.now() };
+  saveUser(newUser);
+  // Guardar en lista de pendientes
+  let existing = pendingUsers.find(u=>u.legajo === currentLegajo);
+  if(!existing) pendingUsers.push({ legajo: currentLegajo, grade: selectedGrade, force: selectedForceLabel, registeredAt: Date.now() });
+  localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+  document.getElementById('registerModal').classList.remove('open');
+  alert(`✅ Registro exitoso, ${selectedGrade}. Tu cuenta será verificada en 24-48hs. Mientras podés ver publicaciones.`);
+  updateUI();
+}
+
+// ======================== PANEL ADMIN (Verificación manual) ========================
+function loadAdminPanel(){
+  let container = document.getElementById('pendingUsersList');
+  if(pendingUsers.length === 0){ container.innerHTML = '<div style="padding:16px;text-align:center;opacity:0.5">No hay usuarios pendientes</div>'; return; }
+  container.innerHTML = pendingUsers.map((u,idx)=>`
+    <div style="background:var(--g2);padding:12px;border-radius:12px;margin-bottom:8px">
+      <div><strong>Legajo:</strong> ${u.legajo}</div>
+      <div><strong>Grado:</strong> ${u.grade}</div>
+      <div><strong>Fuerza:</strong> ${u.force}</div>
+      <div><strong>Registro:</strong> ${new Date(u.registeredAt).toLocaleString()}</div>
+      <button class="verify-user-btn" data-idx="${idx}" style="margin-top:8px;background:#4caf50;border:none;padding:6px 12px;border-radius:20px;cursor:pointer;color:white">✅ Verificar usuario</button>
+    </div>
+  `).join('');
+  document.querySelectorAll('.verify-user-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    let idx = parseInt(btn.getAttribute('data-idx'));
+    let userToVerify = pendingUsers[idx];
+    if(currentUser && currentUser.legajo === userToVerify.legajo){
+      currentUser.isVerified = true;
+      saveUser(currentUser);
+    }
+    pendingUsers.splice(idx,1);
+    localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+    loadAdminPanel();
+    updateUI();
+    alert(`✅ Usuario ${userToVerify.legajo} verificado. Ya puede publicar y ver contactos.`);
+  }));
+}
+
+// ======================== INICIALIZACIÓN ========================
+document.getElementById('registerBtnNav').addEventListener('click',()=>{ if(!currentUser) document.getElementById('registerModal').classList.add('open'); else alert('Ya estás registrado'); });
+document.getElementById('closeRegModal').addEventListener('click',()=>document.getElementById('registerModal').classList.remove('open'));
+document.getElementById('abrirCajaBtn').addEventListener('click',abrirCaja);
+document.getElementById('copyRefBtn').addEventListener('click',()=>{ if(currentUser?.refCode) navigator.clipboard.writeText(currentUser.refCode); alert('Código copiado'); });
+document.getElementById('addStoryBtn').addEventListener('click',()=>document.getElementById('storyModal').classList.add('open'));
+document.getElementById('closeStoryModal').addEventListener('click',()=>document.getElementById('storyModal').classList.remove('open'));
+document.getElementById('submitStoryBtn').addEventListener('click',()=>{ addStory(document.getElementById('storyText').value); document.getElementById('storyModal').classList.remove('open'); document.getElementById('storyText').value=''; });
+document.getElementById('exploreBtn').addEventListener('click',()=>document.getElementById('listingsGrid').scrollIntoView({behavior:'smooth'}));
+document.getElementById('walletNav').addEventListener('click',()=>alert(`💰 Billetera:\n• Comisiones: $${userComisiones}\n• Puntos: ${currentUser?.points||0}\n• Llaves: ${llaves}`));
+document.getElementById('adminPanelBtn').addEventListener('click',()=>{ loadAdminPanel(); document.getElementById('adminModal').classList.add('open'); });
+document.getElementById('closeAdminModal').addEventListener('click',()=>document.getElementById('adminModal').classList.remove('open'));
+document.getElementById('chatFab').addEventListener('click',()=>{ if(currentUser?.isVerified) document.getElementById('chatWindow').classList.toggle('open'); else alert('🔒 Verifica tu cuenta para usar el chat.'); });
+document.getElementById('closeChat').addEventListener('click',()=>document.getElementById('chatWindow').classList.remove('open'));
+document.getElementById('chatSend').addEventListener('click',()=>{ let inp=document.getElementById('chatInput'); if(inp.value.trim() && currentUser?.isVerified){ document.getElementById('chatMessages').innerHTML+=`<div style="background:rgba(143,180,58,0.15);padding:10px;border-radius:12px;margin:4px 0">Tú: ${inp.value}</div>`; inp.value=''; completeMission('chat'); } else if(!currentUser?.isVerified) alert('🔒 Verifica tu cuenta para chatear.'); });
+document.getElementById('donateBtn').addEventListener('click',()=>document.getElementById('donateModal').classList.add('open'));
+document.getElementById('closeDonateModal').addEventListener('click',()=>document.getElementById('donateModal').classList.remove('open'));
+document.getElementById('processDonationBtn').addEventListener('click',()=>{ let amount = parseInt(document.querySelector('.donate-amount[style*="background: rgba(143,180,58, 0.3)"]')?.getAttribute('data-amount')) || parseInt(document.getElementById('customDonation').value) || 0; if(amount>0){ totalDonations+=amount; localStorage.setItem('totalDonations',totalDonations); updateDonationUI(); alert(`💚 ¡Gracias por donar $${amount.toLocaleString()}!`); document.getElementById('donateModal').classList.remove('open'); if(currentUser) addPoints(Math.floor(amount/100),false); } else alert('Ingresá un monto'); });
+
+if(currentUser) checkDailyLogin();
+loadListings();
+initRegister();
+updateUI();
+</script>
+</body>
+</html>
