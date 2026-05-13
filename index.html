@@ -76,18 +76,25 @@ body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflo
       <div class="listings-grid" id="serviciosGrid"></div>
     </div>
     <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px;margin-top:24px;border-radius:16px;text-align:center">
-      <h3>🎁 Caja de Botín</h3><!-- COMPRAS GRUPALES -->
-<div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
-  <h3 style="font-family:'Bebas Neue';font-size:22px">🤝 Compras grupales</h3>
-  <div id="gruposContainer"></div>
-  <button id="crearGrupoBtn" style="margin-top:8px;background:var(--v);border:none;padding:8px;width:100%;border-radius:30px;cursor:pointer">➕ Iniciar nueva compra grupal</button>
-</div>
+      <h3>🎁 Caja de Botín</h3>
       <p>🔑 Llaves: <strong id="llavesCount" style="color:var(--gold);font-size:24px">0</strong></p>
       <button id="abrirCajaBtn" style="background:var(--gold);border:none;padding:10px 24px;border-radius:40px;cursor:pointer;font-weight:bold">ABRIR CAJA</button>
       <div id="ultimoPremio" style="margin-top:8px"></div>
     </div>
-    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px"><h3>🏆 Ranking de unidades</h3><div id="rankingsContainer"></div></div>
+
+    <!-- COMPRAS GRUPALES (ubicado correctamente) -->
+    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
+      <h3 style="font-family:'Bebas Neue';font-size:22px">🤝 Compras grupales</h3>
+      <div id="gruposContainer"></div>
+      <button id="crearGrupoBtn" style="margin-top:8px;background:var(--v);border:none;padding:8px;width:100%;border-radius:30px;cursor:pointer">➕ Iniciar nueva compra grupal</button>
+    </div>
+
+    <div style="background:var(--g1);padding:20px;margin-top:24px;border-radius:16px">
+      <h3>🏆 Ranking de unidades</h3>
+      <div id="rankingsContainer"></div>
+    </div>
   </div>
+
   <div class="sidebar-right">
     <div style="background:var(--g1);padding:20px;border-radius:16px;text-align:center">
       <div style="font-size:64px">🎖️</div>
@@ -132,7 +139,6 @@ body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflo
 </footer>
 
 <script>
-  <script>
 // ======================== ADMIN SECRET ========================
 const ADMIN_SECRET = "TacticoAdmin2026";
 
@@ -503,7 +509,6 @@ renderServiciosConGanga();
 renderGrupos();
 updateUI();
 initRegister();
-</script>
 </script>
 </body>
 </html>
