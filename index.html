@@ -127,6 +127,84 @@ body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif;overflo
 </footer>
 
 <script>
+  // ======================== SISTEMA DE GANGA (precio -30% o más) ========================
+function calcularPrecioPromedioPorCategoria(tipo) {
+  // tipo puede ser 'producto' o 'servicio'
+  const items = tipo === 'producto' ? listings : servicios;
+  if (items.length === 0) return 0;
+  const precios = items.map(item => item.price);
+  const total = precios.reduce((a,b) => a + b, 0);
+  return total / items.length;
+}
+
+function marcarGangas() {
+  const productosGanga = listings.filter(p => {
+    const promedio = calcularPrecioPromedioPorCategoria('producto');
+    return promedio > 0 && p.price <= promedio * 0.7;
+  });
+  const serviciosGanga = servicios.filter(s => {
+    const promedio = calcularPrecioPromedioPorCategoria('servicio');
+    return promedio > 0 && s.price <= promedio * 0.7;
+  });
+  return { productosGanga, serviciosGanga };
+}
+
+function renderListingsConGanga() {
+  const { productosGanga } = marcarGangas();
+  const grid = document.getElementById('listingsGrid');
+  grid.innerHTML = listings.map(l => {
+    const esGanga = productosGanga.some(g => g.id === l.id);
+    return `<div class="listing-card">
+      <div class="listing-thumb">${l.svg}</div>
+      <div><strong>${l.title}</strong> ${esGanga ? '<span style="background:var(--r);color:white;padding:2px 8px;border-radius:20px;font-size:10px;margin-left:6px">🔥 GANGA -30%</span>' : ''}</div>
+      <div class="listing-price">$${l.price.toLocaleString()}</div>
+      <div>📍 ${l.loc} · ${l.seller}</div>
+      <button class="buy-product" data-id="${l.id}" data-price="${l.price}" style="margin-top:8px;background:var(--v);border:none;padding:8px;border-radius:30px;width:100%;cursor:pointer">Comprar</button>
+    </div>`;
+  }).join('');
+  // Volver a asignar eventos a los botones
+  document.querySelectorAll('.buy-product').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(btn.getAttribute('data-id'));
+      const item = listings.find(l => l.id === id);
+      if (currentUser) {
+        // Mostrar oferta especial si es ganga
+        if (marcarGangas().productosGanga.some(g => g.id === id)) {
+          alert(`🔥 ¡OFERTA ÚNICA! El precio de este producto es 30% menor al promedio. ¡Aprovechá el ahorro!`);
+        }
+        createTransaction(item, 'producto', item.price);
+      } else alert('Regístrate primero');
+    });
+  });
+}
+
+// Lo mismo para servicios (puedes adaptar)
+function renderServiciosConGanga() {
+  const { serviciosGanga } = marcarGangas();
+  const grid = document.getElementById('serviciosGrid');
+  grid.innerHTML = servicios.map(s => {
+    const esGanga = serviciosGanga.some(g => g.id === s.id);
+    return `<div class="listing-card">
+      <div class="listing-thumb" style="font-size:40px">🛠️</div>
+      <div><strong>${s.title}</strong> ${esGanga ? '<span style="background:var(--r);color:white;padding:2px 8px;border-radius:20px;font-size:10px">🔥 GANGA -30%</span>' : ''}</div>
+      <div class="listing-price">$${s.price.toLocaleString()}</div>
+      <div>📍 ${s.loc} · 🕒 ${s.duration}</div>
+      <button class="hire-service" data-id="${s.id}" data-price="${s.price}" style="margin-top:8px;background:var(--b);border:none;padding:8px;border-radius:30px;width:100%;cursor:pointer">Contratar</button>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.hire-service').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(btn.getAttribute('data-id'));
+      const item = servicios.find(s => s.id === id);
+      if (currentUser) {
+        if (marcarGangas().serviciosGanga.some(g => g.id === id)) {
+          alert(`🔥 ¡SERVICIO EN GANGA! Precio 30% menor al promedio. ¡Ahorrá ahora!`);
+        }
+        createTransaction(item, 'servicio', item.price);
+      } else alert('Regístrate primero');
+    });
+  });
+}
 // ======================== ADMIN SECRET ========================
 const ADMIN_SECRET = "TacticoAdmin2026";
 
