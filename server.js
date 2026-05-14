@@ -20,7 +20,7 @@ app.post('/create-preference', async (req, res) => {
       },
       body: JSON.stringify({
         items: [{
-          title: donorName ? `Donación de ${donorName}` : "Donación a TácticoMarket",
+          title: donorName ? 'Donacion de ' + donorName : 'Donacion a TacticoMarket',
           quantity: 1,
           currency_id: "ARS",
           unit_price: amount,
@@ -37,6 +37,7 @@ app.post('/create-preference', async (req, res) => {
     const data = await response.json();
     res.json({ init_point: data.init_point });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error interno" });
   }
 });
@@ -46,5 +47,4 @@ app.get('/health', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server on port ${PORT}`));
-"Agrego server.js"
+app.listen(PORT, () => console.log('Server on port ' + PORT));
