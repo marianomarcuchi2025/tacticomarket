@@ -119,13 +119,12 @@ body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif}
 </footer>
 
 <script>
-// ======================== CONFIGURACIÓN DE MERCADO PAGO REAL ========================
-// ✅ TU PUBLIC KEY REAL (ya integrada)
+// Configuración de Mercado Pago y backend
 const MP_PUBLIC_KEY = "APP_USR-46eb8024-b517-4584-9c38-31e2ea0a6d11";
+const BACKEND_URL = "https://tacticmarket-backend.onrender.com";
 
-// Inicializar Mercado Pago SDK
-const mp = new MercadoPago(MP_PUBLIC_KEY, {
-  locale: "es-AR"
+// Inicializar Mercado Pago
+const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-AR" });
 });
 
 // ======================== DATOS DE DONACIONES ========================
