@@ -1,625 +1,299 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>TácticoMarket | Marketplace Militar Argentina</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:#070a0e; --surface:#0d1117; --surface2:#111920; --surface3:#162030;
-      --border:#1e3040; --border2:#2a4560;
-      --gold:#c9922a; --gold2:#f0b940; --gold-glow:rgba(201,146,42,0.22);
-      --green:#2aff8f; --green-dim:#1a9958;
-      --red:#ff3b5c; --cyan:#00d4ff; --cyan-dim:#0a7fa0;
-      --text:#c8dce8; --text-dim:#4e6a7a; --text-bright:#f0f8ff;
-      --bb: 'Bebas Neue', sans-serif;
-      --rj: 'Rajdhani', sans-serif;
-      --mo: 'Share Tech Mono', monospace;
-    }
-    html { scroll-behavior: smooth; }
-    body { background:var(--bg); color:var(--text); font-family:var(--rj); overflow-x:hidden; }
-    ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-track { background:var(--bg); } ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
-
-    body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background-image: repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,212,255,0.025) 40px),
-                        repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,212,255,0.025) 40px);
-    }
-
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    @keyframes pulse2  { 0%,100%{opacity:1} 50%{opacity:.35} }
-    @keyframes float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-    @keyframes slide   { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
-    @keyframes fadeUp  { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spin6   { 0%,90%,100%{transform:rotate(0deg)} 95%{transform:rotate(360deg)} }
-    @keyframes toastIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes toastOut{ from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(20px)} }
-    @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0} }
-
-    input, textarea, button { font-family:var(--rj); }
-    input:focus, textarea:focus { outline:none; }
-    button { cursor:pointer; border:none; background:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TácticoMarket — Donaciones con Mercado Pago REAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- SDK de Mercado Pago REAL -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--v:#6b8c3a;--v2:#4e6a28;--v3:#8aaa48;--n:#0a0c08;--n2:#111409;--g1:#1a1f12;--g2:#212918;--a:#c9b99a;--a2:#e8d9c0;--a3:#f0ede8;--r:#c0392b;--b:#1a73e8;--o:#d4780a;--gold:#c8a820;--cyan:#00c8d4}
+body{background:var(--n);color:var(--a3);font-family:'Barlow',sans-serif}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:800;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--g1);border:1px solid rgba(143,180,58,.2);width:100%;max-width:500px;border-radius:16px;padding:24px}
+.btn-glow{background:var(--v);color:var(--n);padding:12px 28px;font-family:'Bebas Neue',sans-serif;font-size:18px;border:none;cursor:pointer;border-radius:40px;transition:0.2s}
+.btn-glow:hover{background:var(--v3);transform:translateY(-2px)}
+.form-input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(143,180,58,.12);color:var(--a3);padding:10px 14px;border-radius:8px;margin-top:4px}
+.donate-amount{background:rgba(143,180,58,0.1);border:1px solid var(--v);border-radius:12px;padding:12px;cursor:pointer;font-weight:bold;transition:0.2s}
+.donate-amount:hover,.donate-amount.selected{background:rgba(143,180,58,0.3);border-color:var(--v3)}
+</style>
 </head>
 <body>
 
-<div id="root"></div>
+<!-- NAVBAR -->
+<nav style="position:sticky;top:0;background:rgba(10,12,8,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(143,180,58,0.12);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto;z-index:100">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--v)">TÁCTICO<span style="color:var(--a)">MKT</span></div>
+  <div style="display:flex;gap:12px">
+    <div id="pointsDisplay" style="background:rgba(143,180,58,0.15);padding:6px 14px;border-radius:20px;font-family:monospace">⚡ 0 pts</div>
+    <button id="walletNav" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);padding:8px 16px;border-radius:30px;cursor:pointer">💰 Donar</button>
+    <button id="registerBtnNav" style="background:rgba(143,180,58,0.1);border:1px solid rgba(143,180,58,0.3);padding:8px 20px;border-radius:30px;cursor:pointer">🎖 Registrarse</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="max-width:1400px;margin:30px auto;padding:40px;background:linear-gradient(135deg,#0d1609,#1a2810);border-radius:20px;text-align:center">
+  <h1 style="font-family:'Bebas Neue';font-size:clamp(48px,6vw,80px)">Apoyá <span style="color:var(--v)">TácticoMarket</span></h1>
+  <p style="margin:16px auto;max-width:500px;opacity:0.8">Tu donación voluntaria ayuda a mantener la plataforma <strong>100% gratuita</strong> para todos los militares argentinos.</p>
+  
+  <!-- PROGRESO DE DONACIONES -->
+  <div style="background:var(--g1);border-radius:16px;padding:24px;max-width:400px;margin:20px auto">
+    <div style="font-size:48px">💚</div>
+    <div style="font-size:14px;margin:8px 0">Meta mensual: <strong>$500.000 ARS</strong></div>
+    <div style="background:var(--n);border-radius:30px;height:12px;overflow:hidden">
+      <div id="donationFill" style="width:0%;height:100%;background:linear-gradient(90deg,var(--v),var(--v3));border-radius:30px;transition:width 0.5s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px">
+      <span>Recaudado: <strong id="donationRaised">$0</strong></span>
+      <span>Meta: $500.000</span>
+    </div>
+  </div>
+  
+  <button id="donateNowBtn" class="btn-glow" style="font-size:24px;padding:16px 40px">💚 DONAR AHORA</button>
+</div>
+
+<!-- PUBLICACIONES DESTACADAS -->
+<div style="max-width:1400px;margin:0 auto 40px;padding:0 24px">
+  <h2 style="font-family:'Bebas Neue';font-size:28px;margin-bottom:20px">🔥 Publicaciones destacadas</h2>
+  <div class="listings-grid" id="listingsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px"></div>
+</div>
+
+<!-- SECCIÓN TRANSPARENCIA -->
+<div style="max-width:1400px;margin:0 auto 40px;padding:0 24px">
+  <div style="background:var(--g1);border-radius:16px;padding:24px;text-align:center">
+    <h3 style="font-family:'Bebas Neue';font-size:24px">📌 ¿A dónde va tu donación?</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px">
+      <div><strong>🖥️ Servidores</strong><br>$150.000/mes</div>
+      <div><strong>💻 Desarrollo</strong><br>$250.000/mes</div>
+      <div><strong>📞 Soporte</strong><br>$100.000/mes</div>
+      <div><strong>📱 API y SMS</strong><br>$50.000/mes</div>
+    </div>
+    <p style="margin-top:16px;font-size:12px;opacity:0.6">TácticoMarket es 100% gratuito gracias al apoyo de la comunidad militar.</p>
+  </div>
+</div>
+
+<!-- MODAL DE DONACIÓN CON MERCADO PAGO REAL -->
+<div class="modal-overlay" id="donateModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-family:'Bebas Neue';font-size:28px">💚 Donación voluntaria</h2>
+      <button id="closeDonateModal" style="background:none;border:none;color:var(--a);font-size:24px;cursor:pointer">✕</button>
+    </div>
+    <p style="margin-bottom:16px">Elegí el monto que querés donar para ayudar a mantener TácticoMarket gratuito.</p>
+    
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <button class="donate-amount" data-amount="1000">$1.000</button>
+      <button class="donate-amount" data-amount="2500">$2.500</button>
+      <button class="donate-amount" data-amount="5000">$5.000</button>
+      <button class="donate-amount" data-amount="10000">$10.000</button>
+      <button class="donate-amount" data-amount="20000">$20.000</button>
+      <button class="donate-amount" data-amount="50000">$50.000</button>
+    </div>
+    
+    <div style="margin-bottom:16px">
+      <label class="form-label">Otro monto (ARS)</label>
+      <input type="number" id="customAmount" class="form-input" placeholder="Ej: 15000">
+    </div>
+    
+    <div style="margin-bottom:16px">
+      <label class="form-label">Tu nombre (opcional)</label>
+      <input type="text" id="donorName" class="form-input" placeholder="Ej: Sgt. Pérez">
+    </div>
+    
+    <div style="margin-bottom:16px">
+      <label class="form-label">Mensaje de apoyo (opcional)</label>
+      <input type="text" id="donorMessage" class="form-input" placeholder="¡Fuerza soldados!">
+    </div>
+    
+    <div id="wallet_container" style="margin:16px 0"></div>
+    
+    <button id="processDonationBtn" class="btn-glow" style="width:100%">💚 Continuar con Mercado Pago</button>
+    <p style="font-size:10px;text-align:center;margin-top:12px;opacity:0.5">🔒 Pagos 100% seguros con Mercado Pago. El dinero va directamente a tu cuenta.</p>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:24px;border-top:1px solid rgba(143,180,58,0.1);font-size:12px;opacity:0.5">
+  TácticoMarket · Ayudando a los militares argentinos a ahorrar desde 2025
+</footer>
 
 <script>
-  (function() {
-    // ---------- DOM helpers ----------
-    function createElement(tag, attrs, ...children) {
-      const el = document.createElement(tag);
-      if (attrs) Object.assign(el, attrs);
-      children.forEach(child => {
-        if (typeof child === 'string') el.appendChild(document.createTextNode(child));
-        else if (child) el.appendChild(child);
-      });
-      return el;
-    }
+// ======================== CONFIGURACIÓN DE MERCADO PAGO REAL ========================
+// ✅ TU PUBLIC KEY REAL (ya integrada)
+const MP_PUBLIC_KEY = "APP_USR-46eb8024-b517-4584-9c38-31e2ea0a6d11";
 
-    // ---------- Toast system ----------
-    let activeToast = null;
-    function showToast(msg) {
-      if (activeToast) activeToast.remove();
-      const toast = document.createElement('div');
-      toast.textContent = msg;
-      Object.assign(toast.style, {
-        position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 9999,
-        background: 'var(--surface2)', border: '1px solid var(--green-dim)', borderRadius: '10px',
-        padding: '10px 18px', fontFamily: "'Share Tech Mono', monospace", fontSize: '13px',
-        color: 'var(--green)', pointerEvents: 'none', animation: 'toastIn 0.3s ease forwards'
-      });
-      document.body.appendChild(toast);
-      activeToast = toast;
-      setTimeout(() => {
-        if (toast.parentNode) toast.remove();
-        if (activeToast === toast) activeToast = null;
-      }, 2800);
-    }
+// Inicializar Mercado Pago SDK
+const mp = new MercadoPago(MP_PUBLIC_KEY, {
+  locale: "es-AR"
+});
 
-    // ---------- Data ----------
-    const products = [
-      { id:1, name:"Campera Reglamentaria",  emoji:"🎽", seller:"Sgt. Rodríguez",  branch:"Ejército", price:"$18.500", badge:"hot",  xp:12 },
-      { id:2, name:"Tablet Samsung A8",      emoji:"💻", seller:"Cap. Méndez",     branch:"FAA",      price:"$95.000", badge:"new",  xp:20 },
-      { id:3, name:"Moto Honda CB190",       emoji:"🏍️", seller:"Tte. García",    branch:"Armada",   price:"$420.000",badge:"hot",  xp:50 },
-      { id:4, name:"Reloj Casio G-Shock",    emoji:"⌚", seller:"Cabo Torres",    branch:"Ejército", price:"$62.000", badge:"new",  xp:15 },
-      { id:5, name:"Silla Gamer Ergonómica", emoji:"🪑", seller:"Personal Civil", branch:"EMGE",     price:"$115.000",badge:null,   xp:18 },
-    ];
-    const ranking = [
-      { pos:1, name:"Cnel. Martínez", branch:"EJERCITO", xp:"9.840", emoji:"🪖", medal:"🥇" },
-      { pos:2, name:"Cap. Romero",    branch:"ARMADA",   xp:"8.210", emoji:"⚓", medal:"🥈" },
-      { pos:3, name:"Tte. Suárez",    branch:"FAA",      xp:"7.650", emoji:"✈️", medal:"🥉" },
-      { pos:4, name:"Lic. Fernández", branch:"CIVIL",    xp:"6.990", emoji:"👔", medal:"4"  },
-      { pos:5, name:"Sgt. Díaz",      branch:"EJERCITO", xp:"5.820", emoji:"🪖", medal:"5"  },
-    ];
-    const missions = [
-      { label:"👁️ Ver 3 productos",   xp:10, pct:0  },
-      { label:"🤝 Unirte a un grupo", xp:25, pct:0  },
-      { label:"📤 Compartir código",  xp:15, pct:0  },
-      { label:"💬 Escribir reseña",   xp:20, pct:0  },
-    ];
-    const groups = [
-      { name:"📦 Kit Camping Táctico",      price:"$42.000", orig:"$68.000", pct:72, members:18, total:25, hours:"48:00:00" },
-      { name:"💊 Vitaminas y suplementos",  price:"$28.500", orig:"$45.000", pct:40, members:8,  total:20, hours:"12:30:00" },
-    ];
-    const trends = [
-      { rank:1, name:"Electrónica",    pct:"↑ 34%" },
-      { rank:2, name:"Vehículos",      pct:"↑ 28%" },
-      { rank:3, name:"Indumentaria",   pct:"↑ 19%" },
-      { rank:4, name:"Servicios hogar",pct:"↑ 15%" },
-      { rank:5, name:"Alimentos",      pct:"↑ 11%" },
-    ];
-    const services = [
-      { icon:"💼", name:"Asesoría contable FFAA", desc:"Liquidación de haberes, AFIP y declaración jurada para personal uniformado.", price:"$8.000 / sesión" },
-      { icon:"🔧", name:"Reparación electrónica",  desc:"Celulares, notebooks y tablets. Garantía 90 días. Retiro en base.", price:"Desde $3.500" },
-      { icon:"🚗", name:"Traslados y fletes",      desc:"Mudanzas internas, traslados de unidad a unidad. Todo el país.", price:"Presupuesto gratis" },
-    ];
-    const stories = [
-      { text:"Vendí mi moto en 3 días dentro de la comunidad. Sin intermediarios. El grupo de compras me ahorró 30%.", name:"Sargento Pérez", rank:"Ejército · 12 años", emoji:"🪖" },
-      { text:"Ofrezco servicios de plomería para compañeros. Ya generé $180.000 extra este mes solo desde TácticoMarket.", name:"Cabo Vidal", rank:"Armada · 8 años", emoji:"⚓" },
-    ];
+// ======================== DATOS DE DONACIONES ========================
+let totalDonations = parseInt(localStorage.getItem('totalDonations')) || 12500;
+let selectedAmount = null;
 
-    let currentFilter = "Todo";
-    let currentUser = null; // placeholder
+function updateDonationUI() {
+  const goal = 500000;
+  const percent = Math.min((totalDonations / goal) * 100, 100);
+  const fillEl = document.getElementById('donationFill');
+  const raisedEl = document.getElementById('donationRaised');
+  if (fillEl) fillEl.style.width = `${percent}%`;
+  if (raisedEl) raisedEl.innerHTML = `$${totalDonations.toLocaleString()}`;
+}
 
-    // ---------- Components ----------
-    function XpBar(pct) {
-      return createElement('div', { style: { background: 'var(--bg)', borderRadius: 4, height: 6, overflow: 'hidden' } },
-        createElement('div', { style: { height: '100%', borderRadius: 4, background: 'linear-gradient(90deg,var(--gold),var(--gold2))', width: `${pct}%`, transition: 'width 1.2s ease' } })
-      );
-    }
+// ======================== CREAR PREFERENCIA DE PAGO ========================
+async function createPaymentPreference(amount, donorName, message) {
+  try {
+    // Crear la preferencia en Mercado Pago
+    const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${MP_PUBLIC_KEY}`
+      },
+      body: JSON.stringify({
+        items: [{
+          title: donorName ? `Donación de ${donorName} a TácticoMarket` : "Donación a TácticoMarket",
+          quantity: 1,
+          currency_id: "ARS",
+          unit_price: amount,
+          description: message || "Apoyo voluntario para mantener la plataforma gratuita para militares"
+        }],
+        back_urls: {
+          success: window.location.href + "?donation=success",
+          failure: window.location.href + "?donation=failure"
+        },
+        auto_return: "approved",
+        notification_url: "https://webhook.site/tactico-market" // Webhook opcional
+      })
+    });
+    
+    const data = await response.json();
+    return data.init_point;
+  } catch (error) {
+    console.error("Error al crear preferencia:", error);
+    return null;
+  }
+}
 
-    function ProgressBar(pct, color = 'linear-gradient(90deg,var(--green-dim),var(--green))') {
-      return createElement('div', { style: { background: 'var(--bg)', borderRadius: 4, height: 8, overflow: 'hidden', position: 'relative' } },
-        createElement('div', { style: { height: '100%', borderRadius: 4, background: color, width: `${pct}%`, position: 'relative', overflow: 'hidden' } },
-          createElement('div', { style: { position: 'absolute', inset: 0, background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent)', animation: 'slide 1.6s ease-in-out infinite' } })
-        )
-      );
-    }
+// ======================== PROCESAR DONACIÓN ========================
+async function processDonation() {
+  let amount = selectedAmount;
+  const customAmount = parseInt(document.getElementById('customAmount')?.value || '0');
+  if (customAmount > 0) amount = customAmount;
+  
+  if (!amount || amount < 100) {
+    alert("⚠️ El monto mínimo de donación es $100 ARS");
+    return;
+  }
+  
+  const donorName = document.getElementById('donorName')?.value || '';
+  const donorMessage = document.getElementById('donorMessage')?.value || '';
+  
+  const btn = document.getElementById('processDonationBtn');
+  const originalText = btn.innerText;
+  btn.innerText = "⏳ Procesando...";
+  btn.disabled = true;
+  
+  const checkoutUrl = await createPaymentPreference(amount, donorName, donorMessage);
+  
+  if (checkoutUrl) {
+    // Actualizar estadísticas localmente (opcional)
+    totalDonations += amount;
+    localStorage.setItem('totalDonations', totalDonations);
+    updateDonationUI();
+    
+    // Abrir Mercado Pago para el pago
+    window.open(checkoutUrl, '_blank');
+    alert(`💚 ¡Gracias por tu donación de $${amount.toLocaleString()}! Serás redirigido a Mercado Pago para completar el pago.`);
+    document.getElementById('donateModal').classList.remove('open');
+  } else {
+    alert("❌ Error al conectar con Mercado Pago. Verificá tu conexión a internet.");
+  }
+  
+  btn.innerText = originalText;
+  btn.disabled = false;
+}
 
-    function Badge({ type }) {
-      const map = {
-        hot:  { bg:"rgba(255,59,92,.18)",  border:"rgba(255,59,92,.45)",  color:"var(--red)",   label:"HOT"   },
-        new:  { bg:"rgba(0,212,255,.15)",  border:"var(--cyan-dim)",      color:"var(--cyan)",  label:"NUEVO" },
-      };
-      const s = map[type];
-      if (!s) return null;
-      return createElement('span', { style: { position: 'absolute', top: 8, left: 8, fontFamily: "'Share Tech Mono', monospace", fontSize: 10, padding: '3px 8px', borderRadius: 4, background: s.bg, border: `1px solid ${s.border}`, color: s.color, letterSpacing: 1, zIndex: 1 } }, s.label);
-    }
+// ======================== SELECCIONAR MONTO ========================
+document.querySelectorAll('.donate-amount').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.donate-amount').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedAmount = parseInt(btn.getAttribute('data-amount'));
+    const customInput = document.getElementById('customAmount');
+    if (customInput) customInput.value = '';
+  });
+});
 
-    function ProductCard(p) {
-      const div = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', transition: 'all .25s' } });
-      div.addEventListener('mouseenter', () => { div.style.transform = 'translateY(-4px)'; div.style.borderColor = 'var(--border2)'; div.style.boxShadow = '0 10px 36px rgba(0,0,0,.45)'; });
-      div.addEventListener('mouseleave', () => { div.style.transform = ''; div.style.borderColor = 'var(--border)'; div.style.boxShadow = ''; });
-      div.addEventListener('click', () => showToast(`🛒 Cargando: ${p.name}`));
-      const topDiv = createElement('div', { style: { height: 130, background: 'var(--surface3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52, position: 'relative' } }, p.emoji);
-      if (p.badge) topDiv.appendChild(Badge({ type: p.badge }));
-      const body = createElement('div', { style: { padding: '12px 14px' } });
-      body.appendChild(createElement('div', { style: { fontWeight: 700, fontSize: 14, color: 'var(--text-bright)', marginBottom: 4 } }, p.name));
-      const sellerSpan = createElement('div', { style: { fontSize: 12, color: 'var(--text-dim)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 } });
-      sellerSpan.appendChild(createElement('span', { style: { width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block', boxShadow: '0 0 6px var(--green)' } }));
-      sellerSpan.appendChild(document.createTextNode(`${p.seller} · ${p.branch}`));
-      body.appendChild(sellerSpan);
-      const priceRow = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } });
-      priceRow.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: 'var(--gold2)' } }, p.price));
-      priceRow.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--cyan)', background: 'rgba(0,212,255,.08)', padding: '3px 8px', borderRadius: 4 } }, `+${p.xp} XP`));
-      body.appendChild(priceRow);
-      div.appendChild(topDiv);
-      div.appendChild(body);
-      return div;
-    }
+// ======================== CARGAR LISTINGS ========================
+function loadListings() {
+  const grid = document.getElementById('listingsGrid');
+  if (!grid) return;
+  const items = [
+    { id: 1, title: 'Botas combate talla 42', price: 18000, emoji: '👢', loc: 'Córdoba', seller: 'Sgt. Pérez' },
+    { id: 2, title: 'Samsung A53 128GB', price: 85000, emoji: '📱', loc: 'Mendoza', seller: 'Cap. Rodríguez' },
+    { id: 3, title: 'Mochila táctica 60L', price: 15000, emoji: '🎒', loc: 'Salta', seller: 'Tte. Gómez' },
+    { id: 4, title: 'Uniforme completo talla M', price: 9500, emoji: '🥋', loc: 'Campo Mayo', seller: 'Cb. Martínez' }
+  ];
+  grid.innerHTML = items.map(it => `
+    <div class="listing-card" style="background:var(--g1);border:1px solid rgba(143,180,58,.08);padding:16px;border-radius:12px">
+      <div style="font-size:52px;text-align:center;margin-bottom:12px">${it.emoji}</div>
+      <div style="font-weight:bold;font-size:16px">${it.title}</div>
+      <div style="font-family:'Bebas Neue';font-size:24px;color:var(--v)">$${it.price.toLocaleString()}</div>
+      <div style="font-size:12px;opacity:0.6">📍 ${it.loc} · 👤 ${it.seller}</div>
+      <button class="buy-btn" style="margin-top:12px;width:100%;background:var(--v);border:none;padding:8px;border-radius:30px;cursor:pointer">Comprar</button>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.buy-btn').forEach(btn => {
+    btn.addEventListener('click', () => alert('✅ Compra simulada. En la versión final, se conectará con Mercado Pago.'));
+  });
+}
 
-    function SidebarLeft() {
-      const container = createElement('aside', { style: { borderRight: '1px solid var(--border)', padding: '1.25rem 1rem', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', zIndex: 1 } });
-      // Profile card
-      const profileCard = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem', textAlign: 'center', position: 'relative', overflow: 'hidden' } });
-      profileCard.appendChild(createElement('div', { style: { position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))', backgroundSize: '200% 100%', animation: 'shimmer 2.5s linear infinite' } }));
-      const avatarDiv = createElement('div', { style: { width: 68, height: 68, borderRadius: '50%', background: 'linear-gradient(135deg,var(--gold),var(--gold2))', padding: 3, margin: '0 auto 10px', cursor: 'pointer', transition: 'transform .2s' } });
-      avatarDiv.addEventListener('mouseenter', () => avatarDiv.style.transform = 'scale(1.06)');
-      avatarDiv.addEventListener('mouseleave', () => avatarDiv.style.transform = 'scale(1)');
-      avatarDiv.addEventListener('click', () => showToast('🖌️ Registrá tu legajo para personalizar tu avatar'));
-      avatarDiv.appendChild(createElement('div', { style: { width: '100%', height: '100%', borderRadius: '50%', background: 'var(--surface3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 } }, '🪖'));
-      profileCard.appendChild(avatarDiv);
-      profileCard.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, letterSpacing: 1, color: 'var(--text-bright)' } }, 'OPERATIVO'));
-      profileCard.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--gold)', letterSpacing: 2, marginBottom: 10 } }, '⭐ RECLUTA · NIVEL 1'));
-      profileCard.appendChild(XpBar(0));
-      const xpRow = createElement('div', { style: { display: 'flex', justifyContent: 'space-between', fontFamily: "'Share Tech Mono', monospace", fontSize: 10, color: 'var(--text-dim)', marginTop: 4, marginBottom: 12 } });
-      xpRow.appendChild(createElement('span', {}, '0 XP'));
-      xpRow.appendChild(createElement('span', {}, '100 XP'));
-      profileCard.appendChild(xpRow);
-      const statsGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 } });
-      [["$0","Comisiones"],["0","Ventas"],["#—","Ranking"],["0","Misiones"]].forEach(([v,l]) => {
-        const cell = createElement('div', { style: { background: 'var(--surface3)', borderRadius: 8, padding: '8px', textAlign: 'center' } });
-        cell.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 19, color: 'var(--gold2)', display: 'block' } }, v));
-        cell.appendChild(createElement('span', { style: { fontSize: 10, letterSpacing: 1, color: 'var(--text-dim)', textTransform: 'uppercase' } }, l));
-        statsGrid.appendChild(cell);
-      });
-      profileCard.appendChild(statsGrid);
-      const registerBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000', width: '100%', justifyContent: 'center' } }, '🪖 Registrarme');
-      registerBtn.addEventListener('click', () => showToast('🪖 Ingresá tu número de legajo para registrarte'));
-      profileCard.appendChild(registerBtn);
-      container.appendChild(profileCard);
+// ======================== EVENTOS UI ========================
+document.getElementById('donateNowBtn')?.addEventListener('click', () => {
+  document.getElementById('donateModal').classList.add('open');
+});
+document.getElementById('closeDonateModal')?.addEventListener('click', () => {
+  document.getElementById('donateModal').classList.remove('open');
+});
+document.getElementById('processDonationBtn')?.addEventListener('click', processDonation);
+document.getElementById('walletNav')?.addEventListener('click', () => {
+  document.getElementById('donateModal').classList.add('open');
+});
+document.getElementById('registerBtnNav')?.addEventListener('click', () => {
+  alert('🎖️ Regístrate con tu legajo militar. Próximamente disponible.');
+});
 
-      // Streak
-      const streakDiv = createElement('div', {});
-      streakDiv.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', paddingBottom: 8, borderBottom: '1px solid var(--border)', marginBottom: 10 } }, '🔥 RACHA ACTIVA'));
-      const streakBox = createElement('div', { style: { background: 'linear-gradient(135deg,rgba(201,146,42,.1),rgba(201,146,42,.04))', border: '1px solid rgba(201,146,42,.28)', borderRadius: 10, padding: '1rem', textAlign: 'center' } });
-      streakBox.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 52, lineHeight: 1, color: 'var(--gold2)', textShadow: '0 0 30px var(--gold-glow)' } }, '0'));
-      streakBox.appendChild(createElement('div', { style: { fontSize: 11, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase' } }, 'Días consecutivos'));
-      streakDiv.appendChild(streakBox);
-      container.appendChild(streakDiv);
+// Cerrar modal al hacer clic fuera
+document.getElementById('donateModal')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('donateModal')) {
+    document.getElementById('donateModal').classList.remove('open');
+  }
+});
 
-      // Missions
-      const missionsDiv = createElement('div', {});
-      missionsDiv.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', paddingBottom: 8, borderBottom: '1px solid var(--border)', marginBottom: 10 } }, '📋 MISIONES DIARIAS'));
-      const missionList = createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 8 } });
-      missions.forEach(m => {
-        const item = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', transition: 'border-color .2s' } });
-        item.addEventListener('mouseenter', () => item.style.borderColor = 'var(--border2)');
-        item.addEventListener('mouseleave', () => item.style.borderColor = 'var(--border)');
-        item.addEventListener('click', () => showToast(`Misión: ${m.label}`));
-        const top = createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 } });
-        top.appendChild(createElement('span', { style: { fontWeight: 700, fontSize: 13 } }, m.label));
-        top.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--gold)', background: 'rgba(201,146,42,.1)', padding: '2px 7px', borderRadius: 4 } }, `+${m.xp} XP`));
-        item.appendChild(top);
-        item.appendChild(ProgressBar(m.pct, 'linear-gradient(90deg,var(--cyan-dim),var(--cyan))'));
-        missionList.appendChild(item);
-      });
-      missionsDiv.appendChild(missionList);
-      container.appendChild(missionsDiv);
-      return container;
-    }
+// Verificar si venimos de un pago exitoso
+if (window.location.search.includes('donation=success')) {
+  alert("✅ ¡Muchas gracias por tu donación! Tu apoyo mantiene TácticoMarket vivo.");
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+if (window.location.search.includes('donation=failure')) {
+  alert("❌ El pago no se completó. Podés intentarlo nuevamente cuando quieras.");
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
 
-    function SidebarRight() {
-      const container = createElement('aside', { style: { borderLeft: '1px solid var(--border)', padding: '1.25rem 1rem', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', zIndex: 1 } });
-      // Wallet
-      const wallet = createElement('div', { style: { background: 'linear-gradient(135deg,var(--surface2),var(--surface3))', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem', position: 'relative', overflow: 'hidden' } });
-      wallet.appendChild(createElement('div', { style: { position: 'absolute', top: -30, right: -30, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle,var(--gold)33,transparent 70%)' } }));
-      wallet.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: 4 } }, '// BILLETERA TÁCTICA'));
-      wallet.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 34, color: 'var(--gold2)', letterSpacing: 1, lineHeight: 1, marginBottom: 12 } }, '$0,00'));
-      const btnRow = createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 12 } });
-      const chargeBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', flex: 1, justifyContent: 'center' } }, '⬆️ Cargar');
-      chargeBtn.addEventListener('click', () => showToast('Registrá tu cuenta para cargar saldo.'));
-      const withdrawBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', flex: 1, justifyContent: 'center' } }, '⬇️ Retirar');
-      withdrawBtn.addEventListener('click', () => showToast('Registrá tu cuenta para retirar.'));
-      btnRow.appendChild(chargeBtn);
-      btnRow.appendChild(withdrawBtn);
-      wallet.appendChild(btnRow);
-      const refDiv = createElement('div', { style: { background: 'var(--surface3)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' } });
-      const left = createElement('div', {});
-      left.appendChild(createElement('div', { style: { fontSize: 10, letterSpacing: 2, color: 'var(--text-dim)', fontFamily: "'Share Tech Mono', monospace", textTransform: 'uppercase' } }, 'Código referido'));
-      left.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 14, color: 'var(--cyan)' } }, '— — — — — —'));
-      refDiv.appendChild(left);
-      const copyBtn = createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: 1, color: 'var(--text-dim)', transition: 'color .2s' } }, 'COPIAR');
-      copyBtn.addEventListener('click', () => { showToast('✅ Código copiado'); });
-      refDiv.appendChild(copyBtn);
-      wallet.appendChild(refDiv);
-      container.appendChild(wallet);
+// Inicializar
+loadListings();
+updateDonationUI();
 
-      // Ranking
-      const rankDiv = createElement('div', {});
-      rankDiv.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', paddingBottom: 8, borderBottom: '1px solid var(--border)', marginBottom: 10 } }, '🏆 RANKING GENERAL'));
-      const rankList = createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 4 } });
-      ranking.forEach(r => {
-        const row = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 9, padding: '7px 9px', borderRadius: 8, cursor: 'pointer', transition: 'background .2s' } });
-        row.addEventListener('mouseenter', () => row.style.background = 'var(--surface2)');
-        row.addEventListener('mouseleave', () => row.style.background = '');
-        row.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 15, width: 22, textAlign: 'center', color: r.pos <= 3 ? (r.pos===1?'#ffd700':r.pos===2?'#c0c0c0':'#cd7f32') : 'var(--text-dim)' } }, r.pos <= 3 ? r.medal : r.pos));
-        row.appendChild(createElement('div', { style: { width: 30, height: 30, borderRadius: '50%', background: 'var(--surface3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 } }, r.emoji));
-        const info = createElement('div', { style: { flex: 1 } });
-        info.appendChild(createElement('div', { style: { fontWeight: 700, fontSize: 13, color: 'var(--text)' } }, r.name));
-        info.appendChild(createElement('div', { style: { fontSize: 10, color: 'var(--text-dim)', fontFamily: "'Share Tech Mono', monospace", letterSpacing: 1 } }, r.branch));
-        row.appendChild(info);
-        const xpDiv = createElement('div', { style: { textAlign: 'right' } });
-        xpDiv.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 15, color: 'var(--gold)' } }, r.xp));
-        xpDiv.appendChild(createElement('div', { style: { fontSize: 10, color: 'var(--text-dim)', fontFamily: "'Share Tech Mono', monospace" } }, 'XP'));
-        row.appendChild(xpDiv);
-        rankList.appendChild(row);
-      });
-      rankDiv.appendChild(rankList);
-      container.appendChild(rankDiv);
-
-      // Donate
-      const donateDiv = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem' } });
-      donateDiv.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', paddingBottom: 8, borderBottom: '1px solid var(--border)', marginBottom: 10 } }, '❤️ FONDO SOLIDARIO'));
-      donateDiv.appendChild(createElement('div', { style: { fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.5, marginBottom: 8 } }, 'Ayudamos a familias de compañeros en emergencias. Meta mensual:'));
-      donateDiv.appendChild(ProgressBar(12, 'linear-gradient(90deg,#ff3b5c,#ff7070)'));
-      const row = createElement('div', { style: { display: 'flex', justifyContent: 'space-between', fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--text-dim)', margin: '6px 0 12px' } });
-      row.appendChild(createElement('span', {}, '$60.000'));
-      row.appendChild(createElement('span', {}, 'Meta: $500.000'));
-      donateDiv.appendChild(row);
-      const donateBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000', width: '100%', justifyContent: 'center' } }, '❤️ Donar $500');
-      donateBtn.addEventListener('click', () => showToast('❤️ ¡Gracias! Redirigiendo al pago solidario...'));
-      donateDiv.appendChild(donateBtn);
-      container.appendChild(donateDiv);
-
-      // Trends
-      const trendsDiv = createElement('div', {});
-      trendsDiv.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, letterSpacing: 3, color: 'var(--text-dim)', textTransform: 'uppercase', paddingBottom: 8, borderBottom: '1px solid var(--border)', marginBottom: 10 } }, '📈 TENDENCIAS HOY'));
-      const trendsList = createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } });
-      trends.forEach(t => {
-        const item = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--surface2)', border: '1px solid var(--border)', cursor: 'pointer', transition: 'border-color .2s' } });
-        item.addEventListener('mouseenter', () => item.style.borderColor = 'var(--border2)');
-        item.addEventListener('mouseleave', () => item.style.borderColor = 'var(--border)');
-        item.addEventListener('click', () => showToast(`Tendencia: ${t.name}`));
-        item.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, color: 'var(--text-dim)', width: 18 } }, t.rank));
-        item.appendChild(createElement('span', { style: { flex: 1, fontWeight: 600, fontSize: 13 } }, t.name));
-        item.appendChild(createElement('span', { style: { color: 'var(--green)', fontSize: 12, fontFamily: "'Share Tech Mono', monospace" } }, t.pct));
-        trendsList.appendChild(item);
-      });
-      trendsDiv.appendChild(trendsList);
-      container.appendChild(trendsDiv);
-
-      // Footer button
-      const footerBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', width: '100%', justifyContent: 'center' } }, '📊 Transparencia financiera');
-      footerBtn.addEventListener('click', () => showToast('📊 Transparencia financiera: próximamente'));
-      container.appendChild(footerBtn);
-      return container;
-    }
-
-    function Main() {
-      const main = createElement('main', { style: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.75rem', position: 'relative', zIndex: 1 } });
-      // Hero
-      const hero = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem 2.5rem', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 160, animation: 'fadeUp .5s ease' } });
-      hero.appendChild(createElement('div', { style: { position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 80% 50%,rgba(201,146,42,.14),transparent 60%)' } }));
-      hero.appendChild(createElement('div', { style: { position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)', fontFamily: "'Bebas Neue', sans-serif", fontSize: 160, opacity: .04, letterSpacing: -12, pointerEvents: 'none', userSelect: 'none', color: 'var(--text-bright)' } }, 'TÁCTICO'));
-      const leftHero = createElement('div', { style: { position: 'relative', zIndex: 1 } });
-      leftHero.appendChild(createElement('div', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, letterSpacing: 3, color: 'var(--gold)', marginBottom: 8 } }, '// OPERACIÓN MERCADO ACTIVA'));
-      leftHero.appendChild(createElement('h1', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 44, lineHeight: 1, color: 'var(--text-bright)', letterSpacing: 2, marginBottom: 8 } }, 'EL MERCADO', createElement('br'), createElement('span', { style: { color: 'var(--gold2)' } }, 'DE LAS FUERZAS')));
-      leftHero.appendChild(createElement('p', { style: { fontSize: 14, color: 'var(--text-dim)', maxWidth: 400, lineHeight: 1.55 } }, 'Comprá, vendé y prestá servicios dentro de la comunidad. Ganás XP, subís de rango y desbloqueás beneficios exclusivos.'));
-      const btns = createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } });
-      const publishBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000', justifyContent: 'center' } }, '➕ Publicar producto');
-      publishBtn.addEventListener('click', () => showToast('🪖 Registrá tu legajo para publicar'));
-      const tutorialBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '9px 22px', fontSize: 14, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, '📖 Tutorial');
-      tutorialBtn.addEventListener('click', () => showToast('📖 Tutorial próximamente'));
-      btns.appendChild(publishBtn);
-      btns.appendChild(tutorialBtn);
-      leftHero.appendChild(btns);
-      hero.appendChild(leftHero);
-      const statsRight = createElement('div', { style: { display: 'flex', gap: 2.5, position: 'relative', zIndex: 1 } });
-      [["1.4K","Operativos"],["386","Productos"],["$2.8M","Transacciones"]].forEach(([v,l]) => {
-        const stat = createElement('div', { style: { textAlign: 'center', padding: '0 20px', borderLeft: `1px solid var(--border)` } });
-        stat.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: 'var(--text-bright)', display: 'block' } }, v));
-        stat.appendChild(createElement('span', { style: { fontSize: 11, letterSpacing: 2, color: 'var(--text-dim)', textTransform: 'uppercase' } }, l));
-        statsRight.appendChild(stat);
-      });
-      hero.appendChild(statsRight);
-      main.appendChild(hero);
-
-      // Filters
-      const filters = ["Todo","🪖 Ejército","⚓ Armada","✈️ FAA","👔 Civil"];
-      const filterBar = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', animation: 'fadeUp .5s .05s ease both' } });
-      filters.forEach(f => {
-        const btn = createElement('button', { style: { padding: '6px 16px', borderRadius: 6, border: `1px solid ${currentFilter===f ? 'var(--gold)' : 'var(--border)'}`, background: currentFilter===f ? 'rgba(201,146,42,.12)' : 'transparent', color: currentFilter===f ? 'var(--gold2)' : 'var(--text-dim)', fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s' } }, f);
-        btn.addEventListener('click', () => {
-          currentFilter = f;
-          showToast(`Filtrando: ${f}`);
-          // Re-render filtered products? For simplicity just show toast.
-        });
-        filterBar.appendChild(btn);
-      });
-      const searchDiv = createElement('div', { style: { marginLeft: 'auto', position: 'relative' } });
-      const searchIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      searchIcon.setAttribute("width", "14");
-      searchIcon.setAttribute("height", "14");
-      searchIcon.setAttribute("fill", "none");
-      searchIcon.setAttribute("stroke", "var(--text-dim)");
-      searchIcon.setAttribute("stroke-width", "2");
-      searchIcon.setAttribute("viewBox", "0 0 24 24");
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute("cx", "11");
-      circle.setAttribute("cy", "11");
-      circle.setAttribute("r", "8");
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", "21");
-      line.setAttribute("y1", "21");
-      line.setAttribute("x2", "16.65");
-      line.setAttribute("y2", "16.65");
-      searchIcon.appendChild(circle);
-      searchIcon.appendChild(line);
-      searchDiv.appendChild(searchIcon);
-      const searchInput = createElement('input', { type: 'text', placeholder: 'Buscar productos...', style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 14px 8px 34px', color: 'var(--text)', fontSize: 13, width: 210, transition: 'border-color .2s' } });
-      searchInput.addEventListener('focus', e => e.target.style.borderColor = 'var(--gold)');
-      searchInput.addEventListener('blur', e => e.target.style.borderColor = 'var(--border)');
-      searchDiv.appendChild(searchInput);
-      filterBar.appendChild(searchDiv);
-      main.appendChild(filterBar);
-
-      // Products section
-      const prodSection = createElement('div', { style: { animation: 'fadeUp .5s .1s ease both' } });
-      const prodHeader = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } });
-      prodHeader.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 2, color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: 10 } }, '🔥 PRODUCTOS DESTACADOS', createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, background: 'rgba(201,146,42,.13)', border: '1px solid rgba(201,146,42,.28)', color: 'var(--gold)', padding: '2px 8px', borderRadius: 4, letterSpacing: 2 } }, 'LIVE')));
-      const viewAllBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, 'Ver todos →');
-      viewAllBtn.addEventListener('click', () => showToast('Cargando catálogo completo...'));
-      prodHeader.appendChild(viewAllBtn);
-      prodSection.appendChild(prodHeader);
-      const productsGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(210px,1fr))', gap: 12 } });
-      products.forEach(p => productsGrid.appendChild(ProductCard(p)));
-      // Add card
-      const addCard = createElement('div', { style: { background: 'transparent', border: '2px dashed var(--border2)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', minHeight: 220, color: 'var(--text-dim)', transition: 'all .2s' } });
-      addCard.addEventListener('mouseenter', e => { addCard.style.borderColor = 'var(--gold)'; addCard.style.color = 'var(--gold2)'; });
-      addCard.addEventListener('mouseleave', e => { addCard.style.borderColor = 'var(--border2)'; addCard.style.color = 'var(--text-dim)'; });
-      addCard.addEventListener('click', () => showToast('🪖 Registrá tu legajo para publicar'));
-      addCard.appendChild(createElement('span', { style: { fontSize: 36 } }, '➕'));
-      addCard.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, letterSpacing: 2 } }, 'PUBLICAR'));
-      addCard.appendChild(createElement('span', { style: { fontSize: 11, color: 'var(--text-dim)' } }, '+50 XP al publicar'));
-      productsGrid.appendChild(addCard);
-      prodSection.appendChild(productsGrid);
-      main.appendChild(prodSection);
-
-      // Services section
-      const servSection = createElement('div', { style: { animation: 'fadeUp .5s .15s ease both' } });
-      const servHeader = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } });
-      servHeader.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 2, color: 'var(--text-bright)' } }, '🛠️ SERVICIOS'));
-      const servViewAll = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, 'Ver todos →');
-      servViewAll.addEventListener('click', () => showToast('Cargando servicios...'));
-      servHeader.appendChild(servViewAll);
-      servSection.appendChild(servHeader);
-      const servicesGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 12 } });
-      services.forEach(s => {
-        const card = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem', display: 'flex', gap: 14, cursor: 'pointer', transition: 'all .25s' } });
-        card.addEventListener('mouseenter', () => { card.style.borderColor = 'var(--border2)'; card.style.background = 'var(--surface3)'; });
-        card.addEventListener('mouseleave', () => { card.style.borderColor = 'var(--border)'; card.style.background = 'var(--surface2)'; });
-        const iconDiv = createElement('div', { style: { width: 48, height: 48, borderRadius: 10, background: 'rgba(201,146,42,.1)', border: '1px solid rgba(201,146,42,.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 } }, s.icon);
-        const infoDiv = createElement('div', { style: { flex: 1 } });
-        infoDiv.appendChild(createElement('div', { style: { fontWeight: 700, fontSize: 14, color: 'var(--text-bright)', marginBottom: 4 } }, s.name));
-        infoDiv.appendChild(createElement('div', { style: { fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.45, marginBottom: 10 } }, s.desc));
-        const priceRow = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } });
-        priceRow.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 17, color: 'var(--gold2)' } }, s.price));
-        const hireBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, 'Contratar');
-        hireBtn.addEventListener('click', (e) => { e.stopPropagation(); showToast('Contactando al proveedor...'); });
-        priceRow.appendChild(hireBtn);
-        infoDiv.appendChild(priceRow);
-        card.appendChild(iconDiv);
-        card.appendChild(infoDiv);
-        servicesGrid.appendChild(card);
-      });
-      servSection.appendChild(servicesGrid);
-      main.appendChild(servSection);
-
-      // Group buys section
-      const groupSection = createElement('div', { style: { animation: 'fadeUp .5s .2s ease both' } });
-      const groupHeader = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } });
-      groupHeader.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 2, color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: 10 } }, '🤝 COMPRAS GRUPALES', createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 10, background: 'rgba(201,146,42,.13)', border: '1px solid rgba(201,146,42,.28)', color: 'var(--gold)', padding: '2px 8px', borderRadius: 4, letterSpacing: 2 } }, 'ACTIVAS')));
-      groupSection.appendChild(groupHeader);
-      const groupsGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 12 } });
-      groups.forEach(g => {
-        const card = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem' } });
-        const topRow = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 } });
-        topRow.appendChild(createElement('span', { style: { fontWeight: 700, fontSize: 14, color: 'var(--text-bright)' } }, g.name));
-        topRow.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--red)', background: 'rgba(255,59,92,.1)', border: '1px solid rgba(255,59,92,.28)', padding: '3px 8px', borderRadius: 4 } }, `⏱ ${g.hours}`));
-        card.appendChild(topRow);
-        card.appendChild(ProgressBar(g.pct));
-        const statsRow = createElement('div', { style: { display: 'flex', justifyContent: 'space-between', fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: 'var(--text-dim)', margin: '6px 0 12px' } });
-        statsRow.appendChild(createElement('span', {}, `${g.members}/${g.total} miembros`));
-        statsRow.appendChild(createElement('span', {}, `${g.pct}% completado`));
-        card.appendChild(statsRow);
-        const bottomRow = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } });
-        const priceSpan = createElement('div', {});
-        priceSpan.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: 'var(--green)' } }, g.price));
-        priceSpan.appendChild(createElement('span', { style: { fontSize: 11, color: 'var(--text-dim)', marginLeft: 8 } }, `vs ${g.orig}`));
-        bottomRow.appendChild(priceSpan);
-        const joinBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--green-dim)', borderRadius: 7, background: 'rgba(42,255,143,.13)', color: 'var(--green)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, 'Unirme');
-        joinBtn.addEventListener('click', () => showToast(`✅ ¡Uniéndote a: ${g.name}!`));
-        bottomRow.appendChild(joinBtn);
-        card.appendChild(bottomRow);
-        groupsGrid.appendChild(card);
-      });
-      const addGroupCard = createElement('div', { style: { background: 'transparent', border: '2px dashed var(--border2)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', padding: '1.5rem', transition: 'all .2s', color: 'var(--text-dim)' } });
-      addGroupCard.addEventListener('mouseenter', e => { addGroupCard.style.borderColor = 'var(--green)'; addGroupCard.style.color = 'var(--green)'; });
-      addGroupCard.addEventListener('mouseleave', e => { addGroupCard.style.borderColor = 'var(--border2)'; addGroupCard.style.color = 'var(--text-dim)'; });
-      addGroupCard.addEventListener('click', () => showToast('🤝 Registrá tu legajo para crear un grupo'));
-      addGroupCard.appendChild(createElement('span', { style: { fontSize: 28 } }, '➕'));
-      addGroupCard.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 11, letterSpacing: 2 } }, 'CREAR GRUPO'));
-      groupsGrid.appendChild(addGroupCard);
-      groupSection.appendChild(groupsGrid);
-      main.appendChild(groupSection);
-
-      // Surprise Box
-      const surpriseBox = createElement('div', { style: { background: 'linear-gradient(135deg,rgba(201,146,42,.07),rgba(240,185,64,.03))', border: '1px solid rgba(201,146,42,.22)', borderRadius: 16, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '2rem', animation: 'fadeUp .5s .25s ease both' } });
-      surpriseBox.appendChild(createElement('div', { style: { fontSize: 64, animation: 'float 3s ease-in-out infinite' } }, '🎁'));
-      const boxText = createElement('div', {});
-      boxText.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, color: 'var(--text-bright)', letterSpacing: 2 } }, 'CAJA SORPRESA TÁCTICA'));
-      boxText.appendChild(createElement('div', { style: { fontSize: 13, color: 'var(--text-dim)', margin: '4px 0 14px', lineHeight: 1.5 } }, 'Acumulá llaves completando misiones y desbloqueá premios exclusivos: créditos, descuentos o productos físicos.'));
-      const keysRow = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } });
-      keysRow.appendChild(createElement('span', { style: { fontFamily: "'Share Tech Mono', monospace", fontSize: 13, color: 'var(--gold)' } }, '🔑 0 llaves disponibles'));
-      const openBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000' } }, '🎁 Abrir caja');
-      openBtn.addEventListener('click', () => showToast('🔑 Necesitás al menos 1 llave. ¡Completá misiones!'));
-      keysRow.appendChild(openBtn);
-      const helpBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, '¿Cómo obtener llaves?');
-      helpBtn.addEventListener('click', () => showToast('Las llaves se obtienen completando misiones diarias.'));
-      keysRow.appendChild(helpBtn);
-      boxText.appendChild(keysRow);
-      surpriseBox.appendChild(boxText);
-      main.appendChild(surpriseBox);
-
-      // Stories
-      const storiesSection = createElement('div', { style: { animation: 'fadeUp .5s .3s ease both' } });
-      const storiesHeader = createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } });
-      storiesHeader.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: 2, color: 'var(--text-bright)' } }, '📖 HISTORIAS DE ÉXITO'));
-      const shareBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, 'Compartir');
-      shareBtn.addEventListener('click', () => showToast('✍️ Registrá tu legajo para compartir'));
-      storiesHeader.appendChild(shareBtn);
-      storiesSection.appendChild(storiesHeader);
-      const storiesGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 } });
-      stories.forEach(s => {
-        const card = createElement('div', { style: { background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem' } });
-        card.appendChild(createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 48, lineHeight: 1, color: 'var(--gold)', opacity: .35, marginBottom: -8 } }, '"'));
-        card.appendChild(createElement('div', { style: { fontSize: 13, color: 'var(--text)', lineHeight: 1.6, marginBottom: 14, fontStyle: 'italic' } }, s.text));
-        const authorDiv = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } });
-        authorDiv.appendChild(createElement('div', { style: { width: 36, height: 36, borderRadius: '50%', background: 'var(--surface3)', border: '1px solid var(--border2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 } }, s.emoji));
-        const authorInfo = createElement('div', {});
-        authorInfo.appendChild(createElement('div', { style: { fontWeight: 700, fontSize: 13 } }, s.name));
-        authorInfo.appendChild(createElement('div', { style: { fontSize: 11, color: 'var(--text-dim)', fontFamily: "'Share Tech Mono', monospace" } }, s.rank));
-        authorDiv.appendChild(authorInfo);
-        card.appendChild(authorDiv);
-        storiesGrid.appendChild(card);
-      });
-      storiesSection.appendChild(storiesGrid);
-      main.appendChild(storiesSection);
-      return main;
-    }
-
-    function Nav() {
-      const nav = createElement('nav', { style: { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, background: 'rgba(7,10,14,.93)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem', height: 64 } });
-      const logoDiv = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' } });
-      const logoIcon = createElement('div', { style: { width: 36, height: 36, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', clipPath: 'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, animation: 'spin6 8s ease-in-out infinite' } }, '⚔️');
-      logoDiv.appendChild(logoIcon);
-      logoDiv.appendChild(createElement('span', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: 'var(--text-bright)', letterSpacing: 2 } }, 'TÁCTICO', createElement('span', { style: { color: 'var(--gold)' } }, 'MKT')));
-      nav.appendChild(logoDiv);
-      const links = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '1.75rem' } });
-      ['Productos','Servicios','Grupos','Tendencias','Historias'].forEach((l, i) => {
-        const a = createElement('a', { href: '#', style: { color: i===0 ? 'var(--text-bright)' : 'var(--text-dim)', textDecoration: 'none', fontWeight: 600, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', paddingBottom: 4, borderBottom: i===0 ? '2px solid var(--gold)' : '2px solid transparent', transition: 'all .2s' } }, l);
-        a.addEventListener('mouseenter', (e) => { a.style.color = 'var(--text-bright)'; a.style.borderBottomColor = 'var(--gold)'; });
-        a.addEventListener('mouseleave', (e) => { if(i!==0){ a.style.color = 'var(--text-dim)'; a.style.borderBottomColor = 'transparent'; } });
-        a.addEventListener('click', (e) => { e.preventDefault(); showToast(`Sección: ${l}`); });
-        links.appendChild(a);
-      });
-      nav.appendChild(links);
-      const rightDiv = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } });
-      const xpDiv = createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 14px', fontFamily: "'Share Tech Mono', monospace", fontSize: 13, color: 'var(--gold2)' } });
-      xpDiv.appendChild(createElement('span', { style: { width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', boxShadow: '0 0 8px var(--green)', animation: 'pulse2 2s infinite' } }));
-      xpDiv.appendChild(document.createTextNode('⚡ 0 XP'));
-      rightDiv.appendChild(xpDiv);
-      const notifBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: '1px solid var(--border2)', borderRadius: 7, background: 'transparent', color: 'var(--text-dim)', padding: '5px 14px', fontSize: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' } }, '🔔');
-      notifBtn.addEventListener('click', () => showToast('🔔 No tenés notificaciones'));
-      rightDiv.appendChild(notifBtn);
-      const regBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000' } }, '🎖️ Registrarse');
-      regBtn.addEventListener('click', () => showToast('🎖️ Ingresá tu número de legajo'));
-      rightDiv.appendChild(regBtn);
-      nav.appendChild(rightDiv);
-      return nav;
-    }
-
-    // Simulated AI Chat (static, without API)
-    function AIChat() {
-      const [open, setOpen] = React.useState ? React.useState(false) : { value: false, set: (v) => {} }; // but we'll use plain JS
-      let openFlag = false;
-      let chatPanel = null;
-      function toggle() {
-        openFlag = !openFlag;
-        if (chatPanel) chatPanel.style.display = openFlag ? 'flex' : 'none';
-      }
-      function sendMessage() {
-        const input = chatPanel.querySelector('.ai-chat-input');
-        const msg = input.value.trim();
-        if (!msg) return;
-        const messagesDiv = chatPanel.querySelector('.ai-chat-messages');
-        const userMsg = createElement('div', { style: { display: 'flex', justifyContent: 'flex-end', marginBottom: 8 } }, createElement('div', { style: { maxWidth: '82%', padding: '10px 14px', borderRadius: 10, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000', fontSize: 13 } }, msg));
-        messagesDiv.appendChild(userMsg);
-        input.value = '';
-        setTimeout(() => {
-          const reply = createElement('div', { style: { display: 'flex', justifyContent: 'flex-start', marginBottom: 8 } }, createElement('div', { style: { maxWidth: '82%', padding: '10px 14px', borderRadius: 10, background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: 13 } }, 'Gracias por tu consulta. Como asistente simulado, por favor registrate en la plataforma para activar todas las funciones.'));
-          messagesDiv.appendChild(reply);
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }, 500);
-      }
-      const container = createElement('div', {});
-      const fab = createElement('div', { style: { position: 'fixed', bottom: 24, right: 24, zIndex: 1000, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg,var(--gold),var(--gold2))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, cursor: 'pointer', boxShadow: '0 4px 24px var(--gold)55', transition: 'transform .2s' } }, '⚔️');
-      fab.addEventListener('click', toggle);
-      container.appendChild(fab);
-      chatPanel = createElement('div', { style: { position: 'fixed', bottom: 96, right: 24, zIndex: 999, width: 380, height: 560, borderRadius: 16, background: 'var(--surface)', border: '1px solid var(--border2)', display: 'none', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,.7)', animation: 'fadeUp .3s ease' } });
-      // header
-      const header = createElement('div', { style: { padding: '14px 18px', background: 'var(--surface2)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12 } });
-      header.appendChild(createElement('div', { style: { width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg,var(--gold),var(--gold2))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 } }, '⚔️'));
-      header.appendChild(createElement('div', {}, createElement('div', { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: 1, color: 'var(--text-bright)' } }, 'TÁCTICO IA'), createElement('div', { style: { fontSize: 11, color: 'var(--green)', fontFamily: "'Share Tech Mono', monospace", display: 'flex', alignItems: 'center', gap: 5 } }, createElement('span', { style: { width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block', animation: 'pulse2 2s infinite' } }), 'OPERATIVO')));
-      const closeBtn = createElement('button', { style: { marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: 18 } }, '✕');
-      closeBtn.addEventListener('click', toggle);
-      header.appendChild(closeBtn);
-      chatPanel.appendChild(header);
-      const messagesDiv = createElement('div', { class: 'ai-chat-messages', style: { flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 } });
-      const welcome = createElement('div', { style: { display: 'flex', justifyContent: 'flex-start' } }, createElement('div', { style: { maxWidth: '82%', padding: '10px 14px', borderRadius: 10, background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: 13 } }, '¡Bienvenido a TácticoMarket! 🎖️ Soy TÁCTICO IA. Puedo ayudarte a encontrar productos, entender el sistema de rangos, calcular precios de venta o cualquier duda sobre el marketplace. ¿En qué te asisto hoy?'));
-      messagesDiv.appendChild(welcome);
-      chatPanel.appendChild(messagesDiv);
-      const inputRow = createElement('div', { style: { padding: '12px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: 8 } });
-      const inputField = createElement('textarea', { class: 'ai-chat-input', placeholder: 'Escribí tu consulta táctica...', rows: 1, style: { flex: 1, background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 8, padding: '9px 12px', color: 'var(--text)', fontSize: 13, resize: 'none', outline: 'none', lineHeight: 1.4, fontFamily: "'Rajdhani', sans-serif" } });
-      inputField.addEventListener('focus', e => e.target.style.borderColor = 'var(--gold)');
-      inputField.addEventListener('blur', e => e.target.style.borderColor = 'var(--border)');
-      const sendBtn = createElement('button', { style: { display: 'inline-flex', alignItems: 'center', gap: 7, border: 'none', borderRadius: 7, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer', transition: 'all .2s', padding: '9px 22px', fontSize: 14, background: 'linear-gradient(135deg,var(--gold),var(--gold2))', color: '#000' } }, '➤');
-      sendBtn.addEventListener('click', sendMessage);
-      inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-      inputRow.appendChild(inputField);
-      inputRow.appendChild(sendBtn);
-      chatPanel.appendChild(inputRow);
-      container.appendChild(chatPanel);
-      return container;
-    }
-
-    // Mount everything
-    const root = document.getElementById('root');
-    const app = createElement('div', { style: { minHeight: '100vh', position: 'relative' } });
-    app.appendChild(Nav());
-    const mainGrid = createElement('div', { style: { display: 'grid', gridTemplateColumns: '260px 1fr 290px', paddingTop: 64, minHeight: 'calc(100vh - 64px)', position: 'relative', zIndex: 1 } });
-    mainGrid.appendChild(SidebarLeft());
-    mainGrid.appendChild(Main());
-    mainGrid.appendChild(SidebarRight());
-    app.appendChild(mainGrid);
-    app.appendChild(AIChat());
-    root.appendChild(app);
-  })();
+// Usuario demo
+let currentUser = JSON.parse(localStorage.getItem('tacticoUser')) || null;
+if (currentUser) {
+  document.getElementById('pointsDisplay').innerHTML = `⚡ ${currentUser.points || 0} pts`;
+} else {
+  document.getElementById('pointsDisplay').innerHTML = `⚡ 500 pts`;
+}
 </script>
 </body>
 </html>
