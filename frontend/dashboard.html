@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mapa — TácticoMarket</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header><nav><a href="index.html">Inicio</a> · <a href="movilidad.html">Movilidad</a></nav></header>
+
+<div id="map"></div>
+
+<div class="container">
+  <div class="card">
+    <h3>Solicitar viaje</h3>
+    <input id="destino" placeholder="Destino">
+    <button class="btn" onclick="crearViaje()" style="margin-top:10px">Pedir viaje</button>
+
+    <h3 style="margin-top:20px">Estado</h3>
+    <div id="estado">Esperando...</div>
+
+    <button class="btn" onclick="logout()" style="margin-top:15px">Salir</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

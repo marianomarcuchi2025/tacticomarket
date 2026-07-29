@@ -1,0 +1,120 @@
+:root {
+  --bg: #0a0c08;
+  --panel: #1a1f12;
+  --panel-alt: #111409;
+  --accent: #6b8c3a;
+  --accent-hover: #8aaa48;
+  --text: #f0ede8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', Arial, sans-serif;
+}
+
+header {
+  background: var(--panel);
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid var(--accent);
+}
+
+header nav a {
+  color: var(--text);
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+header nav a:hover {
+  color: var(--accent);
+}
+
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.card {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+}
+
+.listing-card {
+  background: var(--panel);
+  border-left: 5px solid var(--accent);
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.btn, button {
+  background: var(--accent);
+  color: #0a0c08;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn:hover, button:hover {
+  background: var(--accent-hover);
+}
+
+input, select {
+  background: var(--panel-alt);
+  border: 1px solid var(--accent);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.monto-btn {
+  background: rgba(107, 140, 58, 0.2);
+  border: 1px solid var(--accent);
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.monto-btn.selected {
+  background: var(--accent);
+  color: black;
+}
+
+.progress-bar {
+  background: var(--panel-alt);
+  border-radius: 30px;
+  height: 12px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: var(--accent);
+  height: 100%;
+  width: 0%;
+  transition: width 0.5s;
+}
+
+a { color: var(--accent); }
+
+#map { height: 60vh; }

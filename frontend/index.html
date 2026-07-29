@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TácticoMarket — Donaciones</title>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+<header>
+  <nav>
+    <a href="index.html">Inicio</a> ·
+    <a href="login.html">Ingresar</a> ·
+    <a href="mercado.html">Mercado</a> ·
+    <a href="movilidad.html">Movilidad</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1 style="font-size:48px">💚 TÁCTICO MARKET</h1>
+    <h2>Donación voluntaria</h2>
+    <p>Elegí el monto para ayudar a mantener la plataforma gratuita</p>
+
+    <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+    <div id="stats">Recaudado: $12.500 / Meta: $500.000</div>
+
+    <div class="grid">
+      <button class="monto-btn" data-monto="1000">$1.000</button>
+      <button class="monto-btn" data-monto="2500">$2.500</button>
+      <button class="monto-btn" data-monto="5000">$5.000</button>
+      <button class="monto-btn" data-monto="10000">$10.000</button>
+      <button class="monto-btn" data-monto="20000">$20.000</button>
+      <button class="monto-btn" data-monto="50000">$50.000</button>
+    </div>
+
+    <input type="number" id="customMonto" placeholder="Otro monto (ARS)">
+    <input type="text" id="donanteNombre" placeholder="Tu nombre (opcional)" style="margin-top:10px">
+    <input type="text" id="mensaje" placeholder="Mensaje de apoyo (opcional)" style="margin-top:10px">
+
+    <button id="donarBtn" class="btn">💚 DONAR CON MERCADO PAGO</button>
+    <p style="font-size:11px;margin-top:15px;opacity:0.5">🔒 Pagos seguros. El dinero va directamente a TácticoMarket.</p>
+  </div>
+</div>
+
+<script src="js/donate.js"></script>
+</body>
+</html>
