@@ -34,7 +34,7 @@ function renderListado() {
     let precioHtml;
     if (esAyuda) {
       const pct = Math.min(100, Math.round((listing.crowdfunding_current / listing.crowdfunding_goal) * 100));
-      precioHtml = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      precioHtml = `<div class="progress-bar"><div class="progress-fill" data-pct="${pct}"></div></div>
         <p class="listing-meta">Recaudado $${Number(listing.crowdfunding_current).toLocaleString('es-AR')} / $${Number(listing.crowdfunding_goal).toLocaleString('es-AR')}</p>`;
     } else if (listing.price > 0) {
       precioHtml = `<p class="listing-meta">$${Number(listing.price).toLocaleString('es-AR')}${listing.unit ? ' · ' + listing.unit : ''}</p>`;
@@ -43,7 +43,7 @@ function renderListado() {
     }
 
     return `
-      <a href="publicacion.html?id=${listing.id}" style="text-decoration:none;color:inherit">
+      <a href="publicacion.html?id=${listing.id}" class="card-link">
         <div class="listing-card">
           <span class="badge">${CATEGORIA_LABELS[listing.type] || listing.type}</span>
           <span class="listing-title">${escapeHtml(listing.title)}</span>
@@ -54,6 +54,12 @@ function renderListado() {
         </div>
       </a>`;
   }).join('');
+
+  // El ancho de la barra de progreso se setea vía DOM style (no atributo
+  // HTML inline) para que la CSP del backend no lo bloquee.
+  contenedor.querySelectorAll('.progress-fill[data-pct]').forEach((el) => {
+    el.style.width = `${el.dataset.pct}%`;
+  });
 }
 
 function escapeHtml(str) {

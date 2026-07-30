@@ -52,7 +52,11 @@ app.use(helmet({
 app.use(compression());
 app.use(cors({ origin: FRONTEND_ORIGIN }));
 app.use(express.json({ limit: '10kb' }));
-app.use(express.static(path.join(__dirname, '..', 'frontend'), { maxAge: '1h' }));
+// "no-cache" no significa "no cachear": el navegador guarda el archivo
+// pero siempre revalida con el servidor antes de usarlo (ETag -> 304 si
+// no cambió). Evita servir JS/CSS viejo después de un deploy sin tener
+// que versionar cada nombre de archivo.
+app.use(express.static(path.join(__dirname, '..', 'frontend'), { cacheControl: true, etag: true, maxAge: 0, setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache') }));
 
 // Única config segura de exponer al frontend: claves públicas, nunca secretos.
 app.get('/api/public-config', (req, res) => {

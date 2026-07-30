@@ -30,7 +30,7 @@ function renderDetalle() {
   let precioHtml;
   if (esAyuda) {
     const pct = Math.min(100, Math.round((listing.crowdfunding_current / listing.crowdfunding_goal) * 100));
-    precioHtml = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    precioHtml = `<div class="progress-bar"><div class="progress-fill" data-pct="${pct}"></div></div>
       <p class="listing-meta">Recaudado $${Number(listing.crowdfunding_current).toLocaleString('es-AR')} / $${Number(listing.crowdfunding_goal).toLocaleString('es-AR')}</p>`;
   } else if (listing.price > 0) {
     precioHtml = `<p class="listing-meta">$${Number(listing.price).toLocaleString('es-AR')}${listing.unit ? ' · ' + listing.unit : ''}</p>`;
@@ -49,6 +49,10 @@ function renderDetalle() {
       <span class="stars">★ ${((perfil.reputation || 0) / 20).toFixed(1)}</span>
       ${perfil.trust_badge ? ' <span class="badge badge-outline">✓ Confianza</span>' : ''}
     </p>`;
+
+  document.querySelectorAll('#detalle .progress-fill[data-pct]').forEach((el) => {
+    el.style.width = `${el.dataset.pct}%`;
+  });
 
   if (esAyuda) {
     document.getElementById('seccionColecta').hidden = false;
