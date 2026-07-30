@@ -15,6 +15,7 @@ const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
 const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY;
 const DONATION_SUCCESS_URL = process.env.DONATION_SUCCESS_URL || `${FRONTEND_ORIGIN}/?donation=success`;
 const DONATION_FAILURE_URL = process.env.DONATION_FAILURE_URL || `${FRONTEND_ORIGIN}/?donation=failure`;
+const DONATION_PENDING_URL = process.env.DONATION_PENDING_URL || `${FRONTEND_ORIGIN}/?donation=pending`;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -103,6 +104,30 @@ app.post('/api/create-preference', donationLimiter, async (req, res) => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
 
+  // Mercado Pago rechaza auto_return (y no puede llamar a un webhook) si
+  // las URLs apuntan a localhost -no son alcanzables desde sus servidores-.
+  // En producción, con un dominio real, esto queda activo automáticamente.
+  const esLocal = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(DONATION_SUCCESS_URL);
+
+  const preferencePayload = {
+    items: [{
+      title: safeName ? `Donación de ${safeName}` : 'Donación a TácticoMarket',
+      quantity: 1,
+      currency_id: 'ARS',
+      unit_price: parsedAmount,
+      description: safeMessage || 'Apoyo voluntario para mantener la plataforma'
+    }],
+    back_urls: {
+      success: DONATION_SUCCESS_URL,
+      failure: DONATION_FAILURE_URL,
+      pending: DONATION_PENDING_URL
+    }
+  };
+  if (!esLocal) {
+    preferencePayload.auto_return = 'approved';
+    preferencePayload.notification_url = `${FRONTEND_ORIGIN}/api/mp-webhook`;
+  }
+
   try {
     const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
@@ -110,21 +135,7 @@ app.post('/api/create-preference', donationLimiter, async (req, res) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${MP_ACCESS_TOKEN}`
       },
-      body: JSON.stringify({
-        items: [{
-          title: safeName ? `Donación de ${safeName}` : 'Donación a TácticoMarket',
-          quantity: 1,
-          currency_id: 'ARS',
-          unit_price: parsedAmount,
-          description: safeMessage || 'Apoyo voluntario para mantener la plataforma'
-        }],
-        back_urls: {
-          success: DONATION_SUCCESS_URL,
-          failure: DONATION_FAILURE_URL
-        },
-        auto_return: 'approved',
-        notification_url: `${FRONTEND_ORIGIN}/api/mp-webhook`
-      }),
+      body: JSON.stringify(preferencePayload),
       signal: controller.signal
     });
 
