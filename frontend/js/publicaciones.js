@@ -72,6 +72,11 @@ function renderListado() {
   contenedor.querySelectorAll('.progress-fill[data-pct]').forEach((el) => {
     el.style.width = `${el.dataset.pct}%`;
   });
+
+  // Entrada escalonada de tarjetas (mismo motivo: vía DOM, no inline).
+  contenedor.querySelectorAll('.listing-card').forEach((el, i) => {
+    el.style.animationDelay = `${Math.min(i, 8) * 45}ms`;
+  });
 }
 
 function escapeHtml(str) {
