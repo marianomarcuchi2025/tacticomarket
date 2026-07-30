@@ -1,5 +1,3 @@
-requireLogin();
-
 let map;
 let marker;
 let userPos;
@@ -30,5 +28,7 @@ function crearViaje() {
   }
   document.getElementById('estado').innerText = `Viaje solicitado a "${destino}" (demo, sin backend real de matching todavía).`;
 }
+
+document.getElementById('pedirViajeBtn')?.addEventListener('click', crearViaje);
 
 initMap();

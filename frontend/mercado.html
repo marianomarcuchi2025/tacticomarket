@@ -16,19 +16,19 @@
   <div class="listing-card">
     <h3>Notebook Dell</h3>
     <p>Córdoba — RA 143</p>
-    <button onclick="alert('Chat en demo')">Contactar</button>
+    <button type="button" data-demo-alert="Chat en demo">Contactar</button>
   </div>
 
   <div class="listing-card">
     <h3>Celular Samsung</h3>
     <p>Buenos Aires — Campo de Mayo</p>
-    <button onclick="alert('Chat en demo')">Contactar</button>
+    <button type="button" data-demo-alert="Chat en demo">Contactar</button>
   </div>
 
-  <p style="font-size:11px;opacity:0.6;margin-top:15px">Listado de demostración — datos fijos, todavía sin backend real de publicaciones.</p>
+  <p class="fine-print">Listado de demostración — datos fijos, todavía sin backend real de publicaciones.</p>
 </div>
 
 <script src="js/auth.js"></script>
-<script>requireLogin();</script>
+<script src="js/guard.js"></script>
 </body>
 </html>

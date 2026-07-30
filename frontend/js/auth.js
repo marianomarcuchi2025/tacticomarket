@@ -22,3 +22,16 @@ function requireLogin() {
     window.location.href = 'login.html';
   }
 }
+
+document.getElementById('loginBtn')?.addEventListener('click', login);
+document.getElementById('logoutBtn')?.addEventListener('click', logout);
+
+// Botones de contacto/consulta en las pantallas de demo (mercado, movilidad):
+// listado como data-demo-alert en vez de onclick inline, para que la CSP
+// pueda bloquear scripts inline sin romper esta interacción.
+document.addEventListener('click', (event) => {
+  const trigger = event.target.closest('[data-demo-alert]');
+  if (trigger) {
+    alert(trigger.dataset.demoAlert);
+  }
+});

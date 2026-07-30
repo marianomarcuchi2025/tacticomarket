@@ -118,3 +118,10 @@ input, select {
 a { color: var(--accent); }
 
 #map { height: 60vh; }
+
+.title-hero { font-size: 48px; }
+.mt-sm { margin-top: 10px; }
+.mt-md { margin-top: 15px; }
+.mt-lg { margin-top: 20px; }
+.hint { font-size: 12px; opacity: 0.6; margin-bottom: 15px; }
+.fine-print { font-size: 11px; opacity: 0.6; margin-top: 15px; }

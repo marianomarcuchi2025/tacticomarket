@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TácticoMarket — Donaciones</title>
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <link rel="stylesheet" href="css/styles.css">
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
@@ -20,7 +19,7 @@
 
 <div class="container">
   <div class="card">
-    <h1 style="font-size:48px">💚 TÁCTICO MARKET</h1>
+    <h1 class="title-hero">💚 TÁCTICO MARKET</h1>
     <h2>Donación voluntaria</h2>
     <p>Elegí el monto para ayudar a mantener la plataforma gratuita</p>
 
@@ -28,20 +27,20 @@
     <div id="stats">Recaudado: $12.500 / Meta: $500.000</div>
 
     <div class="grid">
-      <button class="monto-btn" data-monto="1000">$1.000</button>
-      <button class="monto-btn" data-monto="2500">$2.500</button>
-      <button class="monto-btn" data-monto="5000">$5.000</button>
-      <button class="monto-btn" data-monto="10000">$10.000</button>
-      <button class="monto-btn" data-monto="20000">$20.000</button>
-      <button class="monto-btn" data-monto="50000">$50.000</button>
+      <button type="button" class="monto-btn" data-monto="1000">$1.000</button>
+      <button type="button" class="monto-btn" data-monto="2500">$2.500</button>
+      <button type="button" class="monto-btn" data-monto="5000">$5.000</button>
+      <button type="button" class="monto-btn" data-monto="10000">$10.000</button>
+      <button type="button" class="monto-btn" data-monto="20000">$20.000</button>
+      <button type="button" class="monto-btn" data-monto="50000">$50.000</button>
     </div>
 
     <input type="number" id="customMonto" placeholder="Otro monto (ARS)">
-    <input type="text" id="donanteNombre" placeholder="Tu nombre (opcional)" style="margin-top:10px">
-    <input type="text" id="mensaje" placeholder="Mensaje de apoyo (opcional)" style="margin-top:10px">
+    <input type="text" id="donanteNombre" placeholder="Tu nombre (opcional)" class="mt-sm">
+    <input type="text" id="mensaje" placeholder="Mensaje de apoyo (opcional)" class="mt-sm">
 
-    <button id="donarBtn" class="btn">💚 DONAR CON MERCADO PAGO</button>
-    <p style="font-size:11px;margin-top:15px;opacity:0.5">🔒 Pagos seguros. El dinero va directamente a TácticoMarket.</p>
+    <button type="button" id="donarBtn" class="btn">💚 DONAR CON MERCADO PAGO</button>
+    <p class="fine-print">🔒 Pagos seguros. El dinero va directamente a TácticoMarket.</p>
   </div>
 </div>
 
