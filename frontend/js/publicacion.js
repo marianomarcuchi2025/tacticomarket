@@ -3,6 +3,11 @@ const CATEGORIA_LABELS = {
   alquiler: 'Alquiler', movilidad: 'Movilidad', ayuda: 'Ayuda / colecta', otro: 'Otro'
 };
 
+const CATEGORIA_ICONS = {
+  venta: '🛒', servicio: '🛠️', mudanza: '📦',
+  alquiler: '🏠', movilidad: '🚗', ayuda: '🤝', otro: '✨'
+};
+
 const params = new URLSearchParams(window.location.search);
 const listingId = params.get('id');
 
@@ -41,7 +46,9 @@ function renderDetalle() {
   document.getElementById('detalle').innerHTML = `
     <span class="badge">${CATEGORIA_LABELS[listing.type] || listing.type}</span>
     <h1>${escapeHtml(listing.title)}</h1>
-    ${listing.image_url ? `<img class="listing-thumb" src="${listing.image_url}" alt="">` : ''}
+    ${listing.image_url
+      ? `<img class="listing-thumb" src="${listing.image_url}" alt="">`
+      : `<div class="listing-thumb-placeholder">${CATEGORIA_ICONS[listing.type] || '✨'}</div>`}
     <p class="mt-sm">${escapeHtml(listing.descripcion)}</p>
     <p class="listing-meta mt-sm">${escapeHtml(listing.province || '')}</p>
     ${precioHtml}

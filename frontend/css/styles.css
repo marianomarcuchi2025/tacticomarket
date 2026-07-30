@@ -24,8 +24,9 @@ html { scroll-behavior: smooth; }
 
 body {
   background:
-    radial-gradient(circle at 15% -10%, rgba(107, 140, 58, 0.12), transparent 40%),
-    radial-gradient(circle at 100% 0%, rgba(107, 140, 58, 0.08), transparent 35%),
+    radial-gradient(circle at 15% -10%, rgba(107, 140, 58, 0.14), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(107, 140, 58, 0.1), transparent 35%),
+    radial-gradient(circle, rgba(240, 237, 232, 0.035) 1px, transparent 1px) 0 0 / 26px 26px,
     var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -46,9 +47,44 @@ header {
   background: rgba(15, 19, 11, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: 14px 20px;
-  text-align: center;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  flex: none;
+}
+.brand:hover { color: var(--text); }
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  box-shadow: var(--shadow-sm);
+  flex: none;
 }
 
 header nav {
@@ -70,10 +106,11 @@ header nav a {
 }
 
 header nav a:hover { color: var(--text); background: var(--accent-soft); }
+header nav a.active { color: var(--text); background: var(--accent-soft); font-weight: 700; }
 
 /* ---------- layout ---------- */
 .container {
-  max-width: 800px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 32px 20px 60px;
 }
@@ -273,6 +310,21 @@ a:hover { color: var(--accent); }
   object-fit: cover;
   border-radius: var(--radius-sm);
   margin: 6px 0;
+}
+
+.listing-thumb-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(107, 140, 58, 0.35), transparent 55%),
+    var(--panel-alt);
+  border: 1px solid var(--border);
 }
 
 .badge {

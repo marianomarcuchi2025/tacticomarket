@@ -8,6 +8,16 @@ const CATEGORIA_LABELS = {
   otro: 'Otro'
 };
 
+const CATEGORIA_ICONS = {
+  venta: '🛒',
+  servicio: '🛠️',
+  mudanza: '📦',
+  alquiler: '🏠',
+  movilidad: '🚗',
+  ayuda: '🤝',
+  otro: '✨'
+};
+
 let todasLasPublicaciones = [];
 let categoriaActiva = '';
 
@@ -47,7 +57,9 @@ function renderListado() {
         <div class="listing-card">
           <span class="badge">${CATEGORIA_LABELS[listing.type] || listing.type}</span>
           <span class="listing-title">${escapeHtml(listing.title)}</span>
-          ${listing.image_url ? `<img class="listing-thumb" src="${listing.image_url}" alt="">` : ''}
+          ${listing.image_url
+            ? `<img class="listing-thumb" src="${listing.image_url}" alt="">`
+            : `<div class="listing-thumb-placeholder">${CATEGORIA_ICONS[listing.type] || '✨'}</div>`}
           <p class="listing-meta">${escapeHtml(listing.province || '')}</p>
           ${precioHtml}
           <p class="listing-meta">${escapeHtml(nombreVendedor)} · <span class="stars">${estrellas(perfil.reputation)}</span>${perfil.trust_badge ? ' <span class="badge badge-outline">✓ Confianza</span>' : ''}</p>
