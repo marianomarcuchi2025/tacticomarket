@@ -27,6 +27,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function mostrarMsg(id, texto, tipo) {
+  const el = document.getElementById(id);
+  el.textContent = texto;
+  el.classList.remove('hidden', 'error-text', 'success-text');
+  if (tipo) el.classList.add(tipo === 'error' ? 'error-text' : 'success-text');
+}
+
 function renderDetalle() {
   const perfil = listing.profiles || {};
   const nombreVendedor = perfil.callsign || perfil.full_name || 'Miembro';
@@ -85,7 +92,7 @@ async function cargarListing() {
 document.getElementById('colaborarBtn').addEventListener('click', async () => {
   const monto = Number(document.getElementById('montoColecta').value);
   if (!monto || monto < 100) {
-    alert('El monto mínimo es $100 ARS');
+    mostrarMsg('colectaMsg', 'El monto mínimo es $100 ARS.', 'error');
     return;
   }
   try {
@@ -97,11 +104,12 @@ document.getElementById('colaborarBtn').addEventListener('click', async () => {
     const data = await response.json();
     if (data.init_point) {
       window.open(data.init_point, '_blank');
+      mostrarMsg('colectaMsg', 'Te redirigimos a Mercado Pago en una pestaña nueva.', 'success');
     } else {
-      alert('Error: ' + (data.error || 'no se pudo iniciar el pago'));
+      mostrarMsg('colectaMsg', data.error || 'No se pudo iniciar el pago.', 'error');
     }
   } catch (error) {
-    alert('Error al conectar con el servidor: ' + error.message);
+    mostrarMsg('colectaMsg', 'No se pudo conectar con el servidor: ' + error.message, 'error');
   }
 });
 
@@ -133,7 +141,17 @@ document.getElementById('formChat').addEventListener('submit', async (event) => 
   event.preventDefault();
   const input = document.getElementById('mensajeInput');
   const body = input.value.trim();
-  if (!body || !otraParte) return;
+  document.getElementById('chatMsg').classList.add('hidden');
+
+  if (!body) {
+    mostrarMsg('chatMsg', 'Escribí algo antes de enviar.', 'error');
+    return;
+  }
+  if (!otraParte) {
+    mostrarMsg('chatMsg', 'Todavía no hay con quién chatear en esta publicación.', 'error');
+    return;
+  }
+
   const { error } = await sb.from('messages').insert({
     listing_id: listingId,
     sender_id: miPerfil.id,
@@ -141,7 +159,7 @@ document.getElementById('formChat').addEventListener('submit', async (event) => 
     body
   });
   if (error) {
-    alert('No se pudo enviar el mensaje: ' + error.message);
+    mostrarMsg('chatMsg', 'No se pudo enviar el mensaje: ' + error.message, 'error');
     return;
   }
   input.value = '';
@@ -213,9 +231,8 @@ async function configurarVistaDueno() {
 
 document.getElementById('cerrarTratoBtn').addEventListener('click', async () => {
   const compradorId = document.getElementById('selectComprador').value;
-  const msgEl = document.getElementById('vendedorMsg');
   if (!compradorId) {
-    msgEl.textContent = 'Elegí con quién cerraste el trato.';
+    mostrarMsg('vendedorMsg', 'Elegí con quién cerraste el trato.', 'error');
     return;
   }
   const monto = Number(document.getElementById('montoTrato').value) || listing.price || 0;
@@ -233,10 +250,10 @@ document.getElementById('cerrarTratoBtn').addEventListener('click', async () => 
   });
 
   if (error) {
-    msgEl.textContent = 'No se pudo registrar: ' + error.message;
+    mostrarMsg('vendedorMsg', 'No se pudo registrar: ' + error.message, 'error');
     return;
   }
-  msgEl.textContent = '¡Listo! Ya podés calificar a la otra persona, y ella a vos.';
+  mostrarMsg('vendedorMsg', 'Trato cerrado. Ya podés calificar a la otra persona, y ella a vos.', 'success');
   actualizarSeccionCalificar();
 });
 
@@ -261,7 +278,6 @@ async function actualizarSeccionCalificar() {
 }
 
 document.getElementById('calificarBtn').addEventListener('click', async () => {
-  const msgEl = document.getElementById('calificarMsg');
   const score = Number(document.getElementById('puntaje').value);
   const comment = document.getElementById('comentarioCalificacion').value.trim();
 
@@ -274,12 +290,13 @@ document.getElementById('calificarBtn').addEventListener('click', async () => {
   });
 
   if (error) {
-    msgEl.textContent = error.message.includes('duplicate') || error.code === '23505'
+    const texto = error.message.includes('duplicate') || error.code === '23505'
       ? 'Ya calificaste a esta persona por esta publicación.'
       : 'No se pudo enviar: ' + error.message;
+    mostrarMsg('calificarMsg', texto, 'error');
     return;
   }
-  msgEl.textContent = '¡Gracias! Tu calificación quedó registrada.';
+  mostrarMsg('calificarMsg', 'Gracias, tu calificación quedó registrada.', 'success');
 });
 
 // ---------- Init ----------

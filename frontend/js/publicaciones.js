@@ -33,7 +33,17 @@ function renderListado() {
     : todasLasPublicaciones;
 
   if (filtradas.length === 0) {
-    contenedor.innerHTML = '<p class="hint">No hay publicaciones todavía en esta categoría. ¡Sé el primero!</p>';
+    const icono = categoriaActiva ? (CATEGORIA_ICONS[categoriaActiva] || '✨') : '📭';
+    const texto = categoriaActiva
+      ? `Todavía nadie publicó en "${CATEGORIA_LABELS[categoriaActiva] || categoriaActiva}".`
+      : 'Todavía no hay publicaciones en TácticoMarket.';
+    contenedor.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${icono}</div>
+        <h3>Nada por acá todavía</h3>
+        <p>${texto} Publicá algo para venderlo, ofrecerlo, o pedir ayuda — otros miembros lo van a ver acá.</p>
+        <a href="publicacion-nueva.html" class="btn">+ Nueva publicación</a>
+      </div>`;
     return;
   }
 

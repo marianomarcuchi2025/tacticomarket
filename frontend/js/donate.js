@@ -3,6 +3,13 @@ const META_DONACIONES = 500000;
 
 let montoSeleccionado = null;
 
+function mostrarMensajeDonacion(texto, tipo) {
+  const msgEl = document.getElementById('donarMsg');
+  msgEl.textContent = texto;
+  msgEl.classList.remove('hidden', 'error-text', 'success-text');
+  if (tipo) msgEl.classList.add(tipo === 'error' ? 'error-text' : 'success-text');
+}
+
 async function cargarStatsDonaciones() {
   try {
     const supabase = await getSupabaseClient();
@@ -33,7 +40,7 @@ document.getElementById('donarBtn').onclick = async () => {
   if (custom > 0) monto = custom;
 
   if (!monto || monto < 100) {
-    alert('⚠️ El monto mínimo es $100 ARS');
+    mostrarMensajeDonacion('El monto mínimo es $100 ARS.', 'error');
     return;
   }
 
@@ -43,6 +50,7 @@ document.getElementById('donarBtn').onclick = async () => {
   const btn = document.getElementById('donarBtn');
   btn.innerText = '⏳ Procesando...';
   btn.disabled = true;
+  document.getElementById('donarMsg').classList.add('hidden');
 
   try {
     const response = await fetch(`${BACKEND_URL}/api/create-preference`, {
@@ -55,12 +63,12 @@ document.getElementById('donarBtn').onclick = async () => {
 
     if (data.init_point) {
       window.open(data.init_point, '_blank');
-      alert('💚 Redirigiendo a Mercado Pago para completar tu donación.');
+      mostrarMensajeDonacion('Te redirigimos a Mercado Pago en una pestaña nueva para completar la donación.', 'success');
     } else {
-      alert('❌ Error: ' + (data.error || JSON.stringify(data)));
+      mostrarMensajeDonacion(data.error || 'No se pudo iniciar el pago.', 'error');
     }
   } catch (error) {
-    alert('❌ Error al conectar con el servidor.\n\n' + error.message);
+    mostrarMensajeDonacion('No se pudo conectar con el servidor: ' + error.message, 'error');
   }
 
   btn.innerText = '💚 DONAR CON MERCADO PAGO';

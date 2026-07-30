@@ -259,6 +259,21 @@ a:hover { color: var(--accent); }
 .mt-lg { margin-top: 24px; }
 .hint { font-size: 12.5px; color: var(--text-muted); margin-bottom: 15px; }
 .fine-print { font-size: 11.5px; color: var(--text-muted); margin-top: 15px; }
+.success-text { color: var(--accent-hover); }
+
+/* ---------- estados vacíos ---------- */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel-alt);
+}
+.empty-state .empty-icon { font-size: 34px; margin-bottom: 10px; }
+.empty-state h3 { margin-bottom: 6px; }
+.empty-state p { color: var(--text-muted); font-size: 13.5px; max-width: 40ch; margin: 0 auto; }
+.empty-state .btn { margin-top: 16px; }
 
 /* ---------- tabs (login, categorías) ---------- */
 .tabs { display: flex; gap: 8px; margin-bottom: 18px; }

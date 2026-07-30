@@ -15,15 +15,21 @@ function initMap() {
       marker = L.marker(userPos).addTo(map).bindPopup('Tu ubicación').openPopup();
     },
     () => {
-      document.getElementById('estado').innerText = 'No se pudo obtener tu ubicación.';
+      mostrarEstadoViaje('No se pudo obtener tu ubicación. Revisá los permisos del navegador.', true);
     }
   );
+}
+
+function mostrarEstadoViaje(texto, esError) {
+  const el = document.getElementById('estado');
+  el.innerText = texto;
+  el.classList.toggle('error-text', !!esError);
 }
 
 async function crearViaje() {
   const destino = document.getElementById('destino').value.trim();
   if (!destino) {
-    alert('Ingresá un destino');
+    mostrarEstadoViaje('Ingresá un destino antes de pedir el viaje.', true);
     return;
   }
 
@@ -41,10 +47,10 @@ async function crearViaje() {
   });
 
   if (error) {
-    document.getElementById('estado').innerText = 'No se pudo publicar: ' + error.message;
+    mostrarEstadoViaje('No se pudo publicar: ' + error.message, true);
     return;
   }
-  document.getElementById('estado').innerText = `Viaje a "${destino}" publicado en Movilidad. Otros miembros ya pueden verlo y escribirte.`;
+  mostrarEstadoViaje(`Viaje a "${destino}" publicado en Movilidad. Otros miembros ya pueden verlo y escribirte.`, false);
 }
 
 document.getElementById('pedirViajeBtn')?.addEventListener('click', crearViaje);

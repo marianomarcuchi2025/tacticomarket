@@ -2,6 +2,8 @@ const categoriaSelect = document.getElementById('categoria');
 const campoPrecio = document.getElementById('campoPrecio');
 const campoColecta = document.getElementById('campoColecta');
 const errorEl = document.getElementById('publicarError');
+const imagenInput = document.getElementById('imagen');
+const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
 
 categoriaSelect.addEventListener('change', () => {
   const esAyuda = categoriaSelect.value === 'ayuda';
@@ -9,9 +11,25 @@ categoriaSelect.addEventListener('change', () => {
   campoPrecio.hidden = esAyuda;
 });
 
+imagenInput.addEventListener('change', () => {
+  const archivo = imagenInput.files[0];
+  if (archivo && archivo.size > MAX_IMAGEN_BYTES) {
+    errorEl.textContent = `La imagen pesa ${(archivo.size / 1024 / 1024).toFixed(1)}MB, el máximo es 5MB.`;
+    errorEl.classList.remove('hidden');
+    imagenInput.value = '';
+  } else {
+    errorEl.classList.add('hidden');
+  }
+});
+
+function mostrarError(texto) {
+  errorEl.textContent = texto;
+  errorEl.classList.remove('hidden');
+}
+
 document.getElementById('formPublicacion').addEventListener('submit', async (event) => {
   event.preventDefault();
-  errorEl.style.display = 'none';
+  errorEl.classList.add('hidden');
 
   const profile = await requireVerified();
   if (!profile) return;
@@ -20,11 +38,29 @@ document.getElementById('formPublicacion').addEventListener('submit', async (eve
   const categoria = categoriaSelect.value;
   const esAyuda = categoria === 'ayuda';
 
+  const titulo = document.getElementById('titulo').value.trim();
+  const descripcion = document.getElementById('descripcion').value.trim();
+
+  if (!titulo) {
+    mostrarError('El título es obligatorio.');
+    return;
+  }
+  if (!descripcion) {
+    mostrarError('La descripción es obligatoria.');
+    return;
+  }
+
+  const archivo = imagenInput.files[0];
+  if (archivo && archivo.size > MAX_IMAGEN_BYTES) {
+    mostrarError(`La imagen pesa ${(archivo.size / 1024 / 1024).toFixed(1)}MB, el máximo es 5MB.`);
+    return;
+  }
+
   const payload = {
     user_id: profile.id,
     type: categoria,
-    title: document.getElementById('titulo').value.trim(),
-    descripcion: document.getElementById('descripcion').value.trim(),
+    title: titulo,
+    descripcion,
     province: document.getElementById('ubicacion').value.trim() || null,
     seller_callsign: profile.callsign || profile.full_name,
     price: esAyuda ? 0 : (Number(document.getElementById('precio').value) || 0),
@@ -33,8 +69,7 @@ document.getElementById('formPublicacion').addEventListener('submit', async (eve
   };
 
   if (esAyuda && !payload.crowdfunding_goal) {
-    errorEl.textContent = 'Ingresá una meta para la colecta.';
-    errorEl.style.display = 'block';
+    mostrarError('Ingresá una meta para la colecta.');
     return;
   }
 
@@ -50,7 +85,6 @@ document.getElementById('formPublicacion').addEventListener('submit', async (eve
       .single();
     if (insertError) throw insertError;
 
-    const archivo = document.getElementById('imagen').files[0];
     if (archivo) {
       const extension = archivo.name.split('.').pop();
       const ruta = `${profile.id}/${inserted.id}.${extension}`;
@@ -67,8 +101,7 @@ document.getElementById('formPublicacion').addEventListener('submit', async (eve
 
     window.location.href = `publicacion.html?id=${inserted.id}`;
   } catch (error) {
-    errorEl.textContent = error.message || 'No se pudo crear la publicación.';
-    errorEl.style.display = 'block';
+    mostrarError(error.message || 'No se pudo crear la publicación.');
     submitBtn.disabled = false;
     submitBtn.innerText = 'Publicar';
   }
