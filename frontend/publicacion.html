@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Publicación — TácticoMarket</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header><nav><a href="index.html">Inicio</a> · <a href="publicaciones.html">Publicaciones</a></nav></header>
+
+<div class="container">
+  <div id="detalle" class="card" style="text-align:left">
+    <p class="hint">Cargando...</p>
+  </div>
+
+  <div id="seccionColecta" class="card mt-md" hidden>
+    <h3>Colaborar con esta colecta</h3>
+    <input type="number" id="montoColecta" placeholder="Monto (ARS)" min="100">
+    <button type="button" class="btn mt-sm" id="colaborarBtn">💚 Colaborar con Mercado Pago</button>
+  </div>
+
+  <div id="seccionChat" class="card mt-md" hidden>
+    <h3 id="chatTitulo">Chat</h3>
+    <div id="chatThread" class="chat-thread"></div>
+    <form id="formChat" class="chat-form">
+      <input type="text" id="mensajeInput" placeholder="Escribí un mensaje..." maxlength="1000">
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <div id="seccionVendedor" class="card mt-md" hidden>
+    <h3>Cerrar trato</h3>
+    <p class="hint">Elegí con quién de los que te escribieron cerraste el trato.</p>
+    <select id="selectComprador"></select>
+    <input type="number" id="montoTrato" placeholder="Monto acordado (ARS, opcional)" class="mt-sm" min="0">
+    <select id="selectPuntoSeguro" class="mt-sm">
+      <option value="">Sin punto de encuentro específico</option>
+    </select>
+    <button type="button" class="btn mt-sm" id="cerrarTratoBtn">Marcar trato cerrado</button>
+    <p id="vendedorMsg" class="fine-print"></p>
+  </div>
+
+  <div id="seccionCalificar" class="card mt-md" hidden>
+    <h3>Calificar a <span id="nombreACalificar"></span></h3>
+    <select id="puntaje">
+      <option value="5">★★★★★ Excelente</option>
+      <option value="4">★★★★ Muy bueno</option>
+      <option value="3">★★★ Bueno</option>
+      <option value="2">★★ Regular</option>
+      <option value="1">★ Malo</option>
+    </select>
+    <textarea id="comentarioCalificacion" placeholder="Comentario (opcional)" class="mt-sm" rows="2"></textarea>
+    <button type="button" class="btn mt-sm" id="calificarBtn">Enviar calificación</button>
+    <p id="calificarMsg" class="fine-print"></p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/publicacion.js?cb=final1"></script>
+</body>
+</html>

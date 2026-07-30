@@ -1,1 +1,1 @@
-requireLogin();
+requireVerified();

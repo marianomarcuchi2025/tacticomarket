@@ -1,19 +1,20 @@
 const BACKEND_URL = window.location.origin;
+const META_DONACIONES = 500000;
 
-let mp = null;
 let montoSeleccionado = null;
 
-async function initMercadoPago() {
+async function cargarStatsDonaciones() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/public-config`);
-    const { publicKey } = await res.json();
-    if (publicKey) {
-      mp = new MercadoPago(publicKey, { locale: 'es-AR' });
-    } else {
-      console.warn('MP_PUBLIC_KEY no configurada en el backend.');
-    }
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('donation_totals').select('total_aprobado').single();
+    if (error) throw error;
+    const total = Number(data.total_aprobado) || 0;
+    const pct = Math.min(100, Math.round((total / META_DONACIONES) * 100));
+    document.getElementById('progressFill').style.width = `${pct}%`;
+    document.getElementById('stats').textContent =
+      `Recaudado: $${total.toLocaleString('es-AR')} / Meta: $${META_DONACIONES.toLocaleString('es-AR')}`;
   } catch (error) {
-    console.error('No se pudo obtener la configuración pública:', error);
+    console.error('No se pudo cargar el total de donaciones:', error);
   }
 }
 
@@ -66,7 +67,7 @@ document.getElementById('donarBtn').onclick = async () => {
   btn.disabled = false;
 };
 
-initMercadoPago();
+cargarStatsDonaciones();
 
 fetch(`${BACKEND_URL}/api/health`)
   .then((r) => r.json())

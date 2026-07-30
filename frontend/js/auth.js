@@ -1,37 +1,81 @@
-function login() {
-  const nombre = document.getElementById('nombre').value.trim();
-  const fuerza = document.getElementById('fuerza').value.trim();
+let cachedProfile = null;
 
-  if (!nombre || !fuerza) {
-    alert('Completá todos los datos');
-    return;
-  }
-
-  const user = { nombre, fuerza, fecha: new Date().toISOString() };
-  localStorage.setItem('user', JSON.stringify(user));
-  window.location.href = 'index.html';
+async function getSession() {
+  const supabase = await getSupabaseClient();
+  const { data } = await supabase.auth.getSession();
+  return data.session;
 }
 
-function logout() {
-  localStorage.removeItem('user');
+async function getProfile() {
+  if (cachedProfile) return cachedProfile;
+  const supabase = await getSupabaseClient();
+  const session = await getSession();
+  if (!session) return null;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single();
+  if (error) {
+    console.error('No se pudo cargar el perfil:', error);
+    return null;
+  }
+  cachedProfile = data;
+  return data;
+}
+
+async function signUp({ email, password, fullName, userType, fuerza, unidad, callsign }) {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        user_type: userType,
+        fuerza: fuerza || null,
+        unidad_destino: unidad || null,
+        callsign: callsign || null
+      }
+    }
+  });
+  if (error) throw error;
+  return data;
+}
+
+async function signIn({ email, password }) {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  cachedProfile = null;
+  return data;
+}
+
+async function signOut() {
+  const supabase = await getSupabaseClient();
+  await supabase.auth.signOut();
+  cachedProfile = null;
   window.location.href = 'login.html';
 }
 
-function requireLogin() {
-  if (!localStorage.getItem('user')) {
+async function requireAuth() {
+  const session = await getSession();
+  if (!session) {
     window.location.href = 'login.html';
+    return null;
   }
+  return session;
 }
 
-document.getElementById('loginBtn')?.addEventListener('click', login);
-document.getElementById('logoutBtn')?.addEventListener('click', logout);
-
-// Botones de contacto/consulta en las pantallas de demo (mercado, movilidad):
-// listado como data-demo-alert en vez de onclick inline, para que la CSP
-// pueda bloquear scripts inline sin romper esta interacción.
-document.addEventListener('click', (event) => {
-  const trigger = event.target.closest('[data-demo-alert]');
-  if (trigger) {
-    alert(trigger.dataset.demoAlert);
+async function requireVerified() {
+  const session = await requireAuth();
+  if (!session) return null;
+  const profile = await getProfile();
+  if (!profile || !profile.verified) {
+    window.location.href = 'pendiente.html';
+    return null;
   }
-});
+  return profile;
+}
+
+document.getElementById('logoutBtn')?.addEventListener('click', signOut);

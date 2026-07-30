@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nueva publicación — TácticoMarket</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header><nav><a href="index.html">Inicio</a> · <a href="publicaciones.html">Publicaciones</a></nav></header>
+
+<div class="container">
+  <div class="card" style="text-align:left">
+    <h1 style="text-align:center">Nueva publicación</h1>
+
+    <form id="formPublicacion">
+      <label class="hint" style="margin-bottom:0">Categoría</label>
+      <select id="categoria" required>
+        <option value="venta">Venta de un producto</option>
+        <option value="servicio">Ofrezco un servicio</option>
+        <option value="mudanza">Ayuda con una mudanza</option>
+        <option value="alquiler">Alquiler</option>
+        <option value="movilidad">Viaje / movilidad</option>
+        <option value="ayuda">Pido ayuda / colecta</option>
+        <option value="otro">Otro</option>
+      </select>
+
+      <input type="text" id="titulo" placeholder="Título" class="mt-sm" required maxlength="120">
+      <textarea id="descripcion" placeholder="Descripción" class="mt-sm" rows="4" required maxlength="2000"></textarea>
+      <input type="text" id="ubicacion" placeholder="Provincia / ubicación" class="mt-sm">
+
+      <div id="campoPrecio">
+        <input type="number" id="precio" placeholder="Precio (opcional, en ARS)" class="mt-sm" min="0">
+        <input type="text" id="unidad" placeholder="Unidad (ej: por hora, precio único)" class="mt-sm">
+      </div>
+
+      <div id="campoColecta" hidden>
+        <input type="number" id="metaColecta" placeholder="Meta de la colecta (ARS)" class="mt-sm" min="100">
+      </div>
+
+      <label class="hint mt-md" style="margin-bottom:0">Foto (opcional, máx. 5MB)</label>
+      <input type="file" id="imagen" accept="image/png,image/jpeg,image/webp">
+
+      <button type="submit" class="btn mt-md">Publicar</button>
+      <p id="publicarError" class="fine-print" style="display:none;color:#e07856"></p>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/publicacion-nueva.js"></script>
+</body>
+</html>

@@ -20,13 +20,31 @@ function initMap() {
   );
 }
 
-function crearViaje() {
+async function crearViaje() {
   const destino = document.getElementById('destino').value.trim();
   if (!destino) {
     alert('Ingresá un destino');
     return;
   }
-  document.getElementById('estado').innerText = `Viaje solicitado a "${destino}" (demo, sin backend real de matching todavía).`;
+
+  const profile = await requireVerified();
+  if (!profile) return;
+
+  const supabase = await getSupabaseClient();
+  const { error } = await supabase.from('listings').insert({
+    user_id: profile.id,
+    type: 'movilidad',
+    title: `Viaje a ${destino}`,
+    descripcion: `Solicitud de viaje/movilidad hacia ${destino}.`,
+    price: 0,
+    seller_callsign: profile.callsign || profile.full_name
+  });
+
+  if (error) {
+    document.getElementById('estado').innerText = 'No se pudo publicar: ' + error.message;
+    return;
+  }
+  document.getElementById('estado').innerText = `Viaje a "${destino}" publicado en Movilidad. Otros miembros ya pueden verlo y escribirte.`;
 }
 
 document.getElementById('pedirViajeBtn')?.addEventListener('click', crearViaje);
