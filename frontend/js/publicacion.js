@@ -35,6 +35,7 @@ function mostrarMsg(id, texto, tipo) {
 }
 
 function renderDetalle() {
+  document.title = `${listing.title} — TácticoMarket`;
   const perfil = listing.profiles || {};
   const nombreVendedor = perfil.callsign || perfil.full_name || 'Miembro';
   const esAyuda = listing.type === 'ayuda' && listing.crowdfunding_goal;

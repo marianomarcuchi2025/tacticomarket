@@ -226,6 +226,12 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'No encontrado' });
+  }
+  if (req.accepts('html')) {
+    return res.status(404).sendFile(path.join(__dirname, '..', 'frontend', '404.html'));
+  }
   res.status(404).json({ error: 'No encontrado' });
 });
 
